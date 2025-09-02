@@ -26,9 +26,14 @@ type RemoveIndex<T> = {
 
 export type SpecificSvelteHTMLElements = RemoveIndex<SvelteHTMLElements>;
 
-export type Renderer<T extends keyof SpecificSvelteHTMLElements> = Snippet<
-	[tagName: T, props: SpecificSvelteHTMLElements[T], node?: Element]
->;
+export type RendererArg<T extends keyof SpecificSvelteHTMLElements> = {
+	tagName: T;
+	props: SpecificSvelteHTMLElements[T];
+	children?: Snippet;
+	node?: Element;
+};
+
+export type Renderer<T extends keyof SpecificSvelteHTMLElements> = Snippet<[RendererArg<T>]>;
 
 /** Map tag names to renderers. */
 export type Renderers = {

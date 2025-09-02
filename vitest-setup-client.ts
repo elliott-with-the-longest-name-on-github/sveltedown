@@ -5,13 +5,14 @@ import { expect } from 'vitest';
 
 expect.extend({
 	to_equal_html(
-		received: string,
+		received: HTMLElement,
 		expected: string,
 		options: { preserve_comments?: boolean; without_normalize_html?: boolean } = {}
 	) {
 		const { preserve_comments, without_normalize_html } = options;
 
 		const process_html = (html: string) => {
+			console.log({ html });
 			if (without_normalize_html) {
 				return normalize_new_line(html.trim()).replace(
 					/(<!(--)?.*?\2>)/g,
@@ -22,7 +23,7 @@ expect.extend({
 			}
 		};
 
-		const normalized_received = process_html(received);
+		const normalized_received = process_html(received.innerHTML);
 		const normalized_expected = process_html(expected);
 		const pass = normalized_received === normalized_expected;
 		const { isNot } = this;

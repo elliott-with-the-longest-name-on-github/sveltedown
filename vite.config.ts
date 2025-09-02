@@ -6,11 +6,7 @@ export default defineConfig({
 	plugins: [sveltekit(), devtoolsJson()],
 	test: {
 		expect: {
-			requireAssertions: true,
-			poll: {
-				timeout: 1000,
-				interval: 100
-			}
+			requireAssertions: true
 		},
 		projects: [
 			{
@@ -25,7 +21,8 @@ export default defineConfig({
 					},
 					include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
 					exclude: ['src/lib/server/**'],
-					setupFiles: ['./vitest-setup-client.ts']
+					setupFiles: ['./vitest-setup-client.ts'],
+					testTimeout: 1_000
 				}
 			},
 			{

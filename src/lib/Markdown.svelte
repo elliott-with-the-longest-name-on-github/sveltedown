@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Options } from './types.js';
 	import { create_processor, create_file, post } from './core.js';
-	import RecursiveRenderer from './RecursiveRenderer.svelte';
+	import { hast_to_svelte } from './hast-to-svelte.svelte.js';
 
 	let options: Options = $props();
 
@@ -9,6 +9,7 @@
 	const file = $derived(create_file(options));
 	const processed = $derived(processor.runSync(processor.parse(file), file));
 	const tree = $derived(post(processed, options));
+	const renderer = $derived(hast_to_svelte(tree, { renderers: options }));
 </script>
 
-<RecursiveRenderer {tree} renderers={options} />
+{@render renderer()}

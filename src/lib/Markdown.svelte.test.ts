@@ -4,23 +4,6 @@ import Markdown from './Markdown.svelte';
 import rehype_raw from 'rehype-raw';
 import remark_gfm from 'remark-gfm';
 
-function strip_comments(html: string) {
-	return html.replace(/<!--[\s\S]*?-->/g, '');
-}
-
-expect.extend({
-	to_equal_html(received, expected) {
-		const received_html = strip_comments(received.innerHTML).trim();
-		const { isNot } = this;
-		return {
-			pass: received_html === expected.trim(),
-			message: () => `Expected ${received_html}${isNot ? ' not' : ''} to be ${expected}`,
-			actual: received_html,
-			expected: expected.trim()
-		};
-	}
-});
-
 describe('Markdown', () => {
 	it('should support `null` as children', async () => {
 		const screen = render(Markdown, { content: null });
@@ -179,7 +162,7 @@ describe('Markdown', () => {
 		await expect
 			.element(screen.container)
 			.to_equal_html(
-				'<table><thead><tr><th style="text-align:left">a</th><th style="text-align:center">b</th><th style="text-align:right">c</th><th>d</th></tr></thead></table>'
+				'<table><thead><tr><th style="text-align: left;">a</th><th style="text-align: center;">b</th><th style="text-align: right;">c</th><th>d</th></tr></thead></table>'
 			);
 	});
 

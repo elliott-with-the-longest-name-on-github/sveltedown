@@ -13,5 +13,5 @@
 		"moduleResolution": "NodeNext",
 		"noUncheckedIndexedAccess": true
 	},
-	"types": ["vitest.d.ts"]
+	"include": ["vitest.d.ts"]
 }

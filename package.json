@@ -32,7 +32,7 @@
 		}
 	},
 	"peerDependencies": {
-		"svelte": "^5.0.0"
+		"svelte": "^5.5.0"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
@@ -54,7 +54,7 @@
 		"publint": "^0.3.2",
 		"rehype-raw": "^7.0.0",
 		"remark-gfm": "^4.0.1",
-		"svelte": "^5.0.0",
+		"svelte": "^5.5.0",
 		"svelte-check": "^4.0.0",
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.20.0",
@@ -76,8 +76,10 @@
 		"esm-env": "^1.2.2",
 		"hast": "^1.0.0",
 		"html-url-attributes": "^3.0.1",
+		"property-information": "^7.1.0",
 		"remark-parse": "^11.0.0",
 		"remark-rehype": "^11.1.2",
+		"style-to-object": "^1.0.9",
 		"unified": "^11.0.5",
 		"unist-util-visit": "^5.0.0",
 		"vfile": "^6.0.3"

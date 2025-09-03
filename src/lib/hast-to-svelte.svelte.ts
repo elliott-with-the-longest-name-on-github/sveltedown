@@ -3,12 +3,13 @@ import { svg, html, type Schema, find } from 'property-information';
 import type { RendererArg, Renderers, SpecificSvelteHTMLElements } from './types.js';
 import style_to_object from 'style-to-object';
 import {
-	render_raw,
-	render_children_element,
-	render_void_element,
-	render_children
+	render_raw as render_raw_compiled,
+	render_children_element as render_children_element_compiled,
+	render_void_element as render_void_element_compiled,
+	render_children as render_children_compiled
 } from './Renderers.svelte';
 import { BROWSER } from 'esm-env';
+import type { Snippet } from 'svelte';
 
 /*
  * This is just for compatibility with the output of `react-markdown` / `toJsxRuntime`
@@ -18,15 +19,23 @@ const table_elements = new Set(['table', 'tbody', 'thead', 'tfoot', 'tr']);
 
 const table_cell_element = new Set(['td', 'th']);
 
-// this is nasty
-let snippet_args: <T>(args: T) => (() => T) | T;
+type DynamicSnippet = (target: Element, ...args: unknown[]) => void;
+
+const to_compiled_snippet = (snippet: DynamicSnippet) => snippet as Snippet;
+
+// these types are mostly a lie but that's ok
+const render_raw = render_raw_compiled as unknown as DynamicSnippet;
+const render_children_element = render_children_element_compiled as unknown as DynamicSnippet;
+const render_void_element = render_void_element_compiled as unknown as DynamicSnippet;
+const render_children = render_children_compiled as unknown as DynamicSnippet;
+
+// this is nasty -- but during SSR snippet args are compiled to just objects, while in CSR
+// they're compiled to thunks. This is here so that on the server we eagerly call the thunk.
+let snippet_arg: <T>(args: () => T) => (() => T) | T;
 if (BROWSER) {
-	snippet_args =
-		<T>(args: T) =>
-		() =>
-			args;
+	snippet_arg = (args) => args;
 } else {
-	snippet_args = <T>(args: T) => args;
+	snippet_arg = (args) => args();
 }
 
 // HTML whitespace expression.
@@ -39,20 +48,20 @@ type State = {
 	schema: Schema;
 };
 
-type RawSnippet = (dom_node: Element, ...args: unknown[]) => void;
+type RawSnippet = (target: Element, ...args: unknown[]) => void;
 
 type Options = {
 	renderers: Renderers;
 };
 
-export function hast_to_svelte(tree: Nodes, options: Options): RawSnippet {
+export function hast_to_svelte(tree: Nodes, options: Options): Snippet {
 	const state: State = {
 		ancestors: [],
 		renderers: options.renderers,
 		schema: html
 	};
 
-	return one(state, tree) ?? (() => {});
+	return (one(state, tree) ?? (() => {})) as Snippet;
 }
 
 function one(state: State, node: Nodes): RawSnippet | undefined {
@@ -68,11 +77,19 @@ function one(state: State, node: Nodes): RawSnippet | undefined {
 
 function root(state: State, node: Root): RawSnippet | undefined {
 	const children = create_children(state, node);
-	return (dom_node: Element) => render_children(dom_node, snippet_args(children));
+	return (target: Element) =>
+		render_children(
+			target,
+			snippet_arg(() => children)
+		);
 }
 
 function text(node: Text): RawSnippet | undefined {
-	return (dom_node: Element) => render_raw(dom_node, snippet_args(node.value));
+	return (target: Element) =>
+		render_raw(
+			target,
+			snippet_arg(() => node.value)
+		);
 }
 
 function element(state: State, node: HastElement): RawSnippet | undefined {
@@ -83,13 +100,8 @@ function element(state: State, node: HastElement): RawSnippet | undefined {
 
 	state.ancestors.push(node);
 
-	const renderer = get_snippet(node.tagName, state.renderers);
 	const props = create_element_properties(state, node);
-	let children = create_children(state, node);
-
-	if (table_elements.has(node.tagName)) {
-		children = children.filter((child) => (typeof child === 'string' ? !whitespace(child) : true));
-	}
+	const children = create_children(state, node);
 
 	state.ancestors.pop();
 	state.schema = parent_schema;
@@ -97,17 +109,19 @@ function element(state: State, node: HastElement): RawSnippet | undefined {
 	const args: RendererArg<keyof SpecificSvelteHTMLElements> = {
 		tagName: node.tagName as keyof SpecificSvelteHTMLElements,
 		props,
-		children: (dom_node: Element) => render_children(dom_node, snippet_args(children)),
+		children:
+			children.length > 0
+				? to_compiled_snippet((target: Element) =>
+						render_children(
+							target,
+							snippet_arg(() => children)
+						)
+					)
+				: undefined,
 		node
 	};
 
-	if (renderer) {
-		return (dom_node: Element) => renderer(dom_node, snippet_args(args));
-	} else if (children.length > 0) {
-		return (dom_node: Element) => render_children_element(dom_node, snippet_args(args));
-	} else {
-		return (dom_node: Element) => render_void_element(dom_node, snippet_args(args));
-	}
+	return get_renderer(node.tagName, state.renderers, args);
 }
 
 function create_element_properties(state: State, node: HastElement) {
@@ -134,7 +148,7 @@ function create_element_properties(state: State, node: HastElement) {
 	}
 
 	if (align_value) {
-		props.style = add_style(state, props.style as string, `text-align: ${align_value}`);
+		props.style = add_style(String(props.style ?? ''), `text-align: ${align_value}`);
 	}
 
 	return props;
@@ -163,6 +177,12 @@ function create_property(
 
 function create_children(state: State, node: Parents) {
 	return node.children
+		.filter((child) => {
+			if (node.type === 'element' && table_elements.has(node.tagName)) {
+				return typeof child === 'string' ? !whitespace(child) : true;
+			}
+			return true;
+		})
 		.map((child) => one(state, child))
 		.filter((value): value is RawSnippet => value !== undefined);
 }
@@ -181,7 +201,7 @@ function whitespace(value: string) {
 	return value.replace(whitespace_regex, '') === '';
 }
 
-function add_style(state: State, styles: string, style: string) {
+function add_style(styles: string, style: string) {
 	try {
 		const original = style_to_object(styles);
 		const additional = style_to_object(style);
@@ -189,18 +209,31 @@ function add_style(state: State, styles: string, style: string) {
 			.map(([key, value]) => `${key}: ${value}`)
 			.join('; ');
 	} catch {
-		return {};
+		return styles; // styles are broken; don't break them more
 	}
 }
 
-// TODO might be worth memoizing
-function get_snippet(tag_name: string | number, snippets: Renderers, seen = new Set<string>()) {
+function get_renderer(
+	tag_name: string | number,
+	renderers: Renderers,
+	args: RendererArg<keyof SpecificSvelteHTMLElements>,
+	seen = new Set<string>()
+) {
 	if (seen.has(tag_name as string)) {
 		throw new Error(`Circular renderer dependency: ${[...seen].join(' => ')} => ${tag_name}`);
 	}
-	const snippet = snippets[tag_name as keyof Renderers];
-	if (typeof snippet === 'string' || typeof snippet === 'number') {
-		return get_snippet(snippet, snippets, seen);
+	const renderer = renderers[tag_name as keyof Renderers];
+	if (typeof renderer === 'string' || typeof renderer === 'number') {
+		return get_renderer(renderer, renderers, args, seen);
 	}
-	return snippet;
+
+	const tagged_args = () => ({ ...args, tagName: tag_name });
+	if (renderer) {
+		return (target: Element) =>
+			(renderer as unknown as DynamicSnippet)(target, snippet_arg(tagged_args));
+	} else if (args.children) {
+		return (target: Element) => render_children_element(target, snippet_arg(tagged_args));
+	} else {
+		return (target: Element) => render_void_element(target, snippet_arg(tagged_args));
+	}
 }

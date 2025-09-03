@@ -12,7 +12,6 @@ expect.extend({
 		const { preserve_comments, without_normalize_html } = options;
 
 		const process_html = (html: string) => {
-			console.log({ html });
 			if (without_normalize_html) {
 				return normalize_new_line(html.trim()).replace(
 					/(<!(--)?.*?\2>)/g,

@@ -73,29 +73,6 @@ export function post(tree: HastNodes, options: Readonly<Options>) {
 					}
 				}
 			}
-
-			// for some idiotic reason, hast, the HTML AST, uses `className` instead of `class`
-			// and ariaXxx instead of aria-xxx
-			if (node.properties) {
-				if (Object.hasOwn(node.properties, 'className')) {
-					node.properties.class =
-						typeof node.properties.className === 'string'
-							? node.properties.className
-							: Array.isArray(node.properties.className)
-								? node.properties.className.join(' ')
-								: (node.properties.className?.toString() ?? '');
-					delete node.properties.className;
-				}
-				for (const [key, value] of Object.entries(node.properties)) {
-					if (key.startsWith('aria')) {
-						node.properties[key.replace(/([A-Z])/, '-$1').toLowerCase()] = value;
-						delete node.properties[key];
-					} else if (key.startsWith('data')) {
-						node.properties[key.replace(/([A-Z])/g, '-$1')] = value;
-						delete node.properties[key];
-					}
-				}
-			}
 		}
 
 		if (node.type === 'element') {

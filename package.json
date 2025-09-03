@@ -54,6 +54,7 @@
 		"publint": "^0.3.2",
 		"rehype-raw": "^7.0.0",
 		"remark-gfm": "^4.0.1",
+		"remark-toc": "^9.0.0",
 		"svelte": "^5.5.0",
 		"svelte-check": "^4.0.0",
 		"typescript": "^5.0.0",

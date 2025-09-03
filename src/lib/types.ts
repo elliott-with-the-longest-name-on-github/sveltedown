@@ -48,7 +48,7 @@ export type URLTransform = (
 	/** URL. */
 	url: string,
 	/** Property name (example: `'href'`). */
-	key: string,
+	property: string,
 	/** Node. */
 	element: Readonly<Element>
 ) => string | null | undefined;

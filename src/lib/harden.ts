@@ -1,18 +1,15 @@
-import type { Nodes as HastNodes } from 'hast';
+import type { Nodes as HastNodes, Root as HastRoot } from 'hast';
 import { CONTINUE, SKIP, visit, type BuildVisitor } from 'unist-util-visit';
 
-export function harden(
-	nodes: HastNodes,
-	{
-		defaultOrigin = '',
-		allowedLinkPrefixes = [],
-		allowedImagePrefixes = []
-	}: {
-		defaultOrigin?: string;
-		allowedLinkPrefixes?: string[];
-		allowedImagePrefixes?: string[];
-	}
-): HastNodes {
+export function harden({
+	defaultOrigin = '',
+	allowedLinkPrefixes = [],
+	allowedImagePrefixes = []
+}: {
+	defaultOrigin?: string;
+	allowedLinkPrefixes?: string[];
+	allowedImagePrefixes?: string[];
+}) {
 	// Only require defaultOrigin if we have specific prefixes (not wildcard only)
 	const has_specific_link_prefixes =
 		allowedLinkPrefixes.length && !allowedLinkPrefixes.every((p) => p === '*');
@@ -25,23 +22,22 @@ export function harden(
 		);
 	}
 
-	const visitor = create_visitor(defaultOrigin, allowedLinkPrefixes, allowedImagePrefixes);
-	visit(nodes, visitor);
-	return nodes;
+	return (tree: HastRoot) => {
+		const visitor = create_visitor(defaultOrigin, allowedLinkPrefixes, allowedImagePrefixes);
+		visit(tree, visitor);
+	};
 }
 
 function parse_url(url: unknown, default_origin: string): URL | null {
 	if (typeof url !== 'string') return null;
 	try {
 		// Try to parse as absolute URL first
-		const url_object = new URL(url);
-		return url_object;
+		return new URL(url);
 	} catch {
 		// If that fails and we have a defaultOrigin, try with it
 		if (default_origin) {
 			try {
-				const url_object = new URL(url, default_origin);
-				return url_object;
+				return new URL(url, default_origin);
 			} catch {
 				return null;
 			}
@@ -55,6 +51,8 @@ function is_path_relative_url(url: unknown): boolean {
 	return url.startsWith('/');
 }
 
+const safe_protocols = new Set(['https:', 'http:', 'irc:', 'ircs:', 'mailto:', 'xmpp:']);
+
 function transform_url(
 	url: unknown,
 	allowedPrefixes: string[],
@@ -63,6 +61,7 @@ function transform_url(
 	if (!url) return null;
 	const parsed_url = parse_url(url, default_origin);
 	if (!parsed_url) return null;
+	if (!safe_protocols.has(parsed_url.protocol)) return null;
 
 	// Check for wildcard - allow all URLs
 	if (allowedPrefixes.includes('*')) {
@@ -171,7 +170,7 @@ const create_visitor = (
 						children: [
 							{
 								type: 'text',
-								value: 'Blocked image: ' + String(node.properties.alt || 'No Description')
+								value: '[Blocked image: ' + String(node.properties.alt || 'No Description') + ']'
 							}
 						]
 					};

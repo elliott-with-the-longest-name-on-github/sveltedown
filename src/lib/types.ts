@@ -76,3 +76,9 @@ export type Options = {
 	/** Change URLs (default: `defaultUrlTransform`). */
 	urlTransform?: URLTransform | null | undefined;
 } & Renderers;
+
+export type HardenedOptions = Options & {
+	defaultOrigin?: string;
+	allowedLinkPrefixes?: string[];
+	allowedImagePrefixes?: string[];
+};

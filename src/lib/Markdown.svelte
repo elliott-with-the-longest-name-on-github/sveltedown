@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Options } from './types.js';
 	import { create_processor, create_file, post } from './core.js';
-	import { hast_to_svelte } from './hast-to-svelte.svelte.js';
+	import { hast_to_svelte } from './hast-to-svelte.js';
 
 	let options: Options = $props();
 

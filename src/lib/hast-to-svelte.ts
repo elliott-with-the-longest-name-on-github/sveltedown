@@ -19,15 +19,15 @@ const table_elements = new Set(['table', 'tbody', 'thead', 'tfoot', 'tr']);
 
 const table_cell_element = new Set(['td', 'th']);
 
-type DynamicSnippet = (target: Element, ...args: unknown[]) => void;
+type RuntimeSnippet = (target: Element, ...args: unknown[]) => void;
 
-const to_compiled_snippet = (snippet: DynamicSnippet) => snippet as Snippet;
+const to_compiled_snippet = (snippet: RuntimeSnippet) => snippet as Snippet;
 
 // these types are mostly a lie but that's ok
-const render_raw = render_raw_compiled as unknown as DynamicSnippet;
-const render_children_element = render_children_element_compiled as unknown as DynamicSnippet;
-const render_void_element = render_void_element_compiled as unknown as DynamicSnippet;
-const render_children = render_children_compiled as unknown as DynamicSnippet;
+const render_raw = render_raw_compiled as unknown as RuntimeSnippet;
+const render_children_element = render_children_element_compiled as unknown as RuntimeSnippet;
+const render_void_element = render_void_element_compiled as unknown as RuntimeSnippet;
+const render_children = render_children_compiled as unknown as RuntimeSnippet;
 
 // this is nasty -- but during SSR snippet args are compiled to just objects, while in CSR
 // they're compiled to thunks. This is here so that on the server we eagerly call the thunk.
@@ -121,7 +121,7 @@ function element(state: State, node: HastElement): RawSnippet | undefined {
 		node
 	};
 
-	return get_renderer(node.tagName, state.renderers, args);
+	return curry_renderer(node.tagName, state.renderers, args);
 }
 
 function create_element_properties(state: State, node: HastElement) {
@@ -213,12 +213,12 @@ function add_style(styles: string, style: string) {
 	}
 }
 
-function get_renderer(
+export function get_renderer(
 	tag_name: string | number,
 	renderers: Renderers,
 	args: RendererArg<keyof SpecificSvelteHTMLElements>,
 	seen = new Set<string>()
-) {
+): RuntimeSnippet {
 	if (seen.has(tag_name as string)) {
 		throw new Error(`Circular renderer dependency: ${[...seen].join(' => ')} => ${tag_name}`);
 	}
@@ -227,13 +227,21 @@ function get_renderer(
 		return get_renderer(renderer, renderers, args, seen);
 	}
 
-	const tagged_args = () => ({ ...args, tagName: tag_name });
 	if (renderer) {
-		return (target: Element) =>
-			(renderer as unknown as DynamicSnippet)(target, snippet_arg(tagged_args));
+		return renderer as unknown as RuntimeSnippet;
 	} else if (args.children) {
-		return (target: Element) => render_children_element(target, snippet_arg(tagged_args));
+		return render_children_element as RuntimeSnippet;
 	} else {
-		return (target: Element) => render_void_element(target, snippet_arg(tagged_args));
+		return render_void_element as RuntimeSnippet;
 	}
+}
+
+export function curry_renderer(
+	tag_name: string | number,
+	renderers: Renderers,
+	args: RendererArg<keyof SpecificSvelteHTMLElements>
+) {
+	const renderer = get_renderer(tag_name, renderers, args);
+	const tagged_args = () => ({ ...args, tagName: tag_name });
+	return (target: Element) => renderer(target, snippet_arg(tagged_args));
 }

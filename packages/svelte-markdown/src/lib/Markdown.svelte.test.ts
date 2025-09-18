@@ -4,7 +4,8 @@ import Markdown from './Markdown.svelte';
 import rehype_raw from 'rehype-raw';
 import remark_gfm from 'remark-gfm';
 import { create_children_element_renderer } from './MarkdownTestRenderers.svelte';
-import '../../vitest.js';
+import '../../vitest.d.ts';
+import type { Parents, Nodes } from 'hast';
 
 describe('Markdown', () => {
 	it('should support `null` as children', async () => {
@@ -569,7 +570,7 @@ describe('Markdown', () => {
 
 	it('should support aria properties', async () => {
 		function plugin() {
-			return function (tree) {
+			return function (tree: Parents) {
 				tree.children.unshift({
 					type: 'element',
 					tagName: 'input',
@@ -590,7 +591,7 @@ describe('Markdown', () => {
 
 	it('should support data properties', async () => {
 		function plugin() {
-			return function (tree) {
+			return function (tree: Parents) {
 				tree.children.unshift({
 					type: 'element',
 					tagName: 'i',
@@ -609,7 +610,7 @@ describe('Markdown', () => {
 
 	it('should support comma separated properties', async () => {
 		function plugin() {
-			return function (tree) {
+			return function (tree: Parents) {
 				tree.children.unshift({
 					type: 'element',
 					tagName: 'i',
@@ -628,7 +629,7 @@ describe('Markdown', () => {
 
 	it('should support `style` properties', async () => {
 		function plugin() {
-			return function (tree) {
+			return function (tree: Parents) {
 				tree.children.unshift({
 					type: 'element',
 					tagName: 'i',
@@ -649,7 +650,7 @@ describe('Markdown', () => {
 
 	it('should support broken `style` properties', async () => {
 		function plugin() {
-			return function (tree) {
+			return function (tree: Parents) {
 				tree.children.unshift({
 					type: 'element',
 					tagName: 'i',
@@ -668,7 +669,7 @@ describe('Markdown', () => {
 
 	it('should support SVG elements', async () => {
 		function plugin() {
-			return function (tree) {
+			return function (tree: Parents) {
 				tree.children.unshift({
 					type: 'element',
 					tagName: 'svg',
@@ -713,7 +714,7 @@ describe('Markdown', () => {
 
 	it('should support comments (ignore them)', async () => {
 		function plugin() {
-			return function (tree) {
+			return function (tree: Parents) {
 				tree.children.unshift({ type: 'comment', value: 'things!' });
 			};
 		}
@@ -741,13 +742,13 @@ describe('Markdown', () => {
 
 	it('should support table cells w/ style', async () => {
 		function plugin() {
-			return function (tree) {
+			return function (tree: Parents) {
 				// Simple tree traversal to find th elements
-				function visit(node) {
+				function visit(node: Nodes) {
 					if (node.type === 'element' && node.tagName === 'th') {
 						node.properties = { ...node.properties, style: 'color: red' };
 					}
-					if (node.children) {
+					if ('children' in node) {
 						node.children.forEach(visit);
 					}
 				}

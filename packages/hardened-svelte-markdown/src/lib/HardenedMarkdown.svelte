@@ -1,21 +1,21 @@
 <script lang="ts">
-	import type { HardenedOptions } from './types.js';
-	import Markdown from './Markdown.svelte';
+	import type { Options } from './types.js';
+	import { Markdown } from '@sejohnson/svelte-markdown';
 	import { harden } from './harden.js';
 
 	let {
 		defaultOrigin = '',
 		allowedLinkPrefixes = [],
 		allowedImagePrefixes = [],
-		rehypePlugins = [],
+		rehypePlugins,
 		...options
-	}: HardenedOptions = $props();
+	}: Options = $props();
 </script>
 
 <Markdown
 	{...options}
 	rehypePlugins={[
-		...rehypePlugins,
+		...(rehypePlugins ?? []),
 		[
 			harden,
 			{

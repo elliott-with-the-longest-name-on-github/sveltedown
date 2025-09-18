@@ -1,6 +1,6 @@
 <script module lang="ts">
 	import type { Snippet } from 'svelte';
-	import type { RendererArg, SpecificSvelteHTMLElements } from './types';
+	import type { Renderer, RendererArg, SpecificSvelteHTMLElements } from './types.js';
 
 	function create_children_element_renderer<TTag extends keyof SpecificSvelteHTMLElements>(
 		assertions: (arg: RendererArg<TTag>) => Promise<void> = () => Promise.resolve()
@@ -8,11 +8,11 @@
 		let { promise, resolve, reject } = Promise.withResolvers();
 		return [
 			promise,
-			(target: Element, arg: () => RendererArg<TTag>) => {
+			((target: Element, arg: () => RendererArg<TTag>) => {
 				assertions(arg()).then(resolve, reject);
-				// @ts-expect-error
+				// @ts-expect-error i don't care
 				render_children_element(target, arg);
-			}
+			}) as unknown as Renderer<TTag>
 		] as const;
 	}
 

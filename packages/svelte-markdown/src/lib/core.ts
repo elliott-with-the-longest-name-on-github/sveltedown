@@ -1,11 +1,10 @@
-import type { PluggableList } from 'unified';
 import type { Options as RemarkRehypeOptions } from 'remark-rehype';
 import type { Options, URLTransform } from './types.js';
 import type { Root as MdastRoot } from 'mdast';
 import type { Root as HastRoot, Nodes as HastNodes } from 'hast';
 import remark_parse from 'remark-parse';
 import remark_rehype from 'remark-rehype';
-import { unified, type Processor } from 'unified';
+import { unified, type Processor, type PluggableList } from 'unified';
 import { VFile } from 'vfile';
 import { DEV } from 'esm-env';
 import { visit, type BuildVisitor } from 'unist-util-visit';

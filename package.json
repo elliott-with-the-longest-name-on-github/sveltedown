@@ -1,68 +1,13 @@
 {
-	"name": "mark-sveltedown",
+	"name": "root",
+	"private": true,
 	"version": "0.0.1",
+	"type": "module",
 	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build && npm run prepack",
-		"preview": "vite preview",
-		"prepare": "svelte-kit sync || echo ''",
-		"prepack": "svelte-kit sync && svelte-package && publint",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"check": "pnpm -r check",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
-		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run"
-	},
-	"files": [
-		"dist",
-		"!dist/**/*.test.*",
-		"!dist/**/*.spec.*"
-	],
-	"sideEffects": [
-		"**/*.css"
-	],
-	"svelte": "./dist/index.js",
-	"types": "./dist/index.d.ts",
-	"type": "module",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"svelte": "./dist/index.js"
-		}
-	},
-	"peerDependencies": {
-		"svelte": "^5.5.0"
-	},
-	"devDependencies": {
-		"@eslint/compat": "^1.2.5",
-		"@eslint/js": "^9.18.0",
-		"@sveltejs/adapter-vercel": "^5.6.3",
-		"@sveltejs/kit": "^2.22.0",
-		"@sveltejs/package": "^2.0.0",
-		"@sveltejs/vite-plugin-svelte": "^6.0.0",
-		"@types/hast": "^3.0.4",
-		"@types/mdast": "^4.0.4",
-		"@vitest/browser": "^3.2.3",
-		"eslint": "^9.18.0",
-		"eslint-config-prettier": "^10.0.1",
-		"eslint-plugin-svelte": "^3.0.0",
-		"globals": "^16.0.0",
-		"playwright": "^1.53.0",
-		"prettier": "^3.4.2",
-		"prettier-plugin-svelte": "^3.3.3",
-		"publint": "^0.3.2",
-		"rehype-raw": "^7.0.0",
-		"remark-gfm": "^4.0.1",
-		"remark-toc": "^9.0.0",
-		"svelte": "^5.5.0",
-		"svelte-check": "^4.0.0",
-		"typescript": "^5.0.0",
-		"typescript-eslint": "^8.20.0",
-		"vite": "^7.0.4",
-		"vite-plugin-devtools-json": "^1.0.0",
-		"vitest": "^3.2.3",
-		"vitest-browser-svelte": "^0.1.0"
+		"test": "pnpm -r test"
 	},
 	"keywords": [
 		"svelte"
@@ -73,16 +18,17 @@
 		]
 	},
 	"packageManager": "pnpm@10.15.0+sha512.486ebc259d3e999a4e8691ce03b5cac4a71cbeca39372a9b762cb500cfdf0873e2cb16abe3d951b1ee2cf012503f027b98b6584e4df22524e0c7450d9ec7aa7b",
-	"dependencies": {
-		"esm-env": "^1.2.2",
-		"hast": "^1.0.0",
-		"html-url-attributes": "^3.0.1",
-		"property-information": "^7.1.0",
-		"remark-parse": "^11.0.0",
-		"remark-rehype": "^11.1.2",
-		"style-to-object": "^1.0.9",
-		"unified": "^11.0.5",
-		"unist-util-visit": "^5.0.0",
-		"vfile": "^6.0.3"
+	"devDependencies": {
+		"@eslint/compat": "catalog:",
+		"@eslint/js": "catalog:",
+		"@sveltejs/adapter-vercel": "catalog:",
+		"@sveltejs/vite-plugin-svelte": "catalog:",
+		"eslint": "catalog:",
+		"eslint-config-prettier": "catalog:",
+		"eslint-plugin-svelte": "catalog:",
+		"globals": "catalog:",
+		"prettier": "catalog:",
+		"prettier-plugin-svelte": "catalog:",
+		"typescript-eslint": "catalog:"
 	}
 }

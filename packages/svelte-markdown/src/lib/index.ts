@@ -5,6 +5,5 @@ export type {
 	Renderers,
 	Renderer,
 	RendererArg,
-	SpecificSvelteHTMLElements,
-	HardenedOptions
-} from './types';
+	SpecificSvelteHTMLElements
+} from './types.js';

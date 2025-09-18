@@ -218,7 +218,7 @@ export function get_renderer(
 	renderers: Renderers,
 	args: RendererArg<keyof SpecificSvelteHTMLElements>,
 	seen = new Set<string>()
-): RuntimeSnippet {
+): [resolved_tag_name: string, renderer: RuntimeSnippet] {
 	if (seen.has(tag_name as string)) {
 		throw new Error(`Circular renderer dependency: ${[...seen].join(' => ')} => ${tag_name}`);
 	}
@@ -228,11 +228,11 @@ export function get_renderer(
 	}
 
 	if (renderer) {
-		return renderer as unknown as RuntimeSnippet;
+		return [tag_name as string, renderer as unknown as RuntimeSnippet];
 	} else if (args.children) {
-		return render_children_element as RuntimeSnippet;
+		return [tag_name as string, render_children_element as RuntimeSnippet];
 	} else {
-		return render_void_element as RuntimeSnippet;
+		return [tag_name as string, render_void_element as RuntimeSnippet];
 	}
 }
 
@@ -241,7 +241,7 @@ export function curry_renderer(
 	renderers: Renderers,
 	args: RendererArg<keyof SpecificSvelteHTMLElements>
 ) {
-	const renderer = get_renderer(tag_name, renderers, args);
-	const tagged_args = () => ({ ...args, tagName: tag_name });
+	const [resolved_tag_name, renderer] = get_renderer(tag_name, renderers, args);
+	const tagged_args = () => ({ ...args, tagName: resolved_tag_name });
 	return (target: Element) => renderer(target, snippet_arg(tagged_args));
 }

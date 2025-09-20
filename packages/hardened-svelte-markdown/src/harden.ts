@@ -63,19 +63,6 @@ function transform_url(
 	if (!parsed_url) return null;
 	if (!safe_protocols.has(parsed_url.protocol)) return null;
 
-	// Check for wildcard - allow all URLs
-	if (allowedPrefixes.includes('*')) {
-		const input_was_relative = is_path_relative_url(url);
-		const url_string = parse_url(url, default_origin);
-		if (url_string) {
-			if (input_was_relative) {
-				return url_string.pathname + url_string.search + url_string.hash;
-			}
-			return url_string.href;
-		}
-		return null;
-	}
-
 	// If the input is path relative, we output a path relative URL as well,
 	// however, we always run the same checks on an absolute URL and we
 	// always rescronstruct the output from the parsed URL to ensure that
@@ -99,6 +86,18 @@ function transform_url(
 			return url_string.pathname + url_string.search + url_string.hash;
 		}
 		return url_string.href;
+	}
+
+	// Check for wildcard - allow all URLs
+	if (allowedPrefixes.includes('*')) {
+		// Wildcard only allows http and https URLs
+		if (parsed_url.protocol !== 'https:' && parsed_url.protocol !== 'http:') {
+			return null;
+		}
+		if (input_was_relative) {
+			return parsed_url.pathname + parsed_url.search + parsed_url.hash;
+		}
+		return parsed_url.href;
 	}
 	return null;
 }

@@ -740,4 +740,26 @@ describe('Wildcard prefix support', () => {
 		await expect.element(screen.getByRole('link')).not.toBeInTheDocument();
 		await expect.element(screen.getByText('Test [blocked]')).toBeInTheDocument();
 	});
+
+	it('wildcard still blocks javascript: URLs (with identity transform)', async () => {
+		const screen = render(HardenedMarkdown, {
+			allowedLinkPrefixes: ['*'],
+			urlTransform: (url) => url,
+			content: '[Test](javascript:alert("XSS"))'
+		});
+
+		await expect.element(screen.getByRole('link')).not.toBeInTheDocument();
+		await expect.element(screen.getByText('Test [blocked]')).toBeInTheDocument();
+	});
+
+	it('wildcard still blocks data: URLs (with identity transform)', async () => {
+		const screen = render(HardenedMarkdown, {
+			allowedLinkPrefixes: ['*'],
+			urlTransform: (url) => url,
+			content: '[Test](data:text/html,123)'
+		});
+
+		await expect.element(screen.getByRole('link')).not.toBeInTheDocument();
+		await expect.element(screen.getByText('Test [blocked]')).toBeInTheDocument();
+	});
 });

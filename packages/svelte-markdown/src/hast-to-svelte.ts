@@ -2,12 +2,8 @@ import type { Element as HastElement, Nodes, Parents, Root, Text } from 'hast';
 import { svg, html, type Schema, find } from 'property-information';
 import type { RendererArg, Renderers, SpecificSvelteHTMLElements } from './types.js';
 import style_to_object from 'style-to-object';
-import {
-	render_raw as render_raw_compiled,
-	render_children_element as render_children_element_compiled,
-	render_void_element as render_void_element_compiled,
-	render_children as render_children_compiled
-} from './Renderers.svelte';
+// vite / esbuild have some sort of dependency-optimization fit if you import the snippets as named imports
+import * as r from './Renderers.svelte';
 import { BROWSER } from 'esm-env';
 import type { Snippet } from 'svelte';
 
@@ -24,10 +20,10 @@ type RuntimeSnippet = (target: Element, ...args: unknown[]) => void;
 const to_compiled_snippet = (snippet: RuntimeSnippet) => snippet as Snippet;
 
 // these types are mostly a lie but that's ok
-const render_raw = render_raw_compiled as unknown as RuntimeSnippet;
-const render_children_element = render_children_element_compiled as unknown as RuntimeSnippet;
-const render_void_element = render_void_element_compiled as unknown as RuntimeSnippet;
-const render_children = render_children_compiled as unknown as RuntimeSnippet;
+const render_raw = r.render_raw as unknown as RuntimeSnippet;
+const render_children_element = r.render_children_element as unknown as RuntimeSnippet;
+const render_void_element = r.render_void_element as unknown as RuntimeSnippet;
+const render_children = r.render_children as unknown as RuntimeSnippet;
 
 // this is nasty -- but during SSR snippet args are compiled to just objects, while in CSR
 // they're compiled to thunks. This is here so that on the server we eagerly call the thunk.

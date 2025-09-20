@@ -1,0 +1,22 @@
+{
+	"name": "config",
+	"private": true,
+	"version": "0.0.1",
+	"description": "internal configuration",
+	"scripts": {},
+	"author": "S. Elliott Johnson",
+	"exports": {
+		"./vitest": {
+			"import": "./vitest/vitest-setup-client.ts"
+		},
+		"./vitest/globals": {
+			"import": "./vitest/globals/vitest.d.ts",
+			"types": "./vitest/globals/vitest.d.ts"
+		}
+	},
+	"devDependencies": {
+		"@vitest/browser": "catalog:",
+		"vitest": "catalog:"
+	},
+	"sideEffects": true
+}

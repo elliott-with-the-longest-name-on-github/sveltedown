@@ -4,6 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
+		"build": "pnpm -r build",
 		"check": "pnpm -r check",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",

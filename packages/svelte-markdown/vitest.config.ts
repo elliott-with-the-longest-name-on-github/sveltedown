@@ -1,13 +1,24 @@
-import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 
 export default defineConfig({
-	plugins: [sveltekit()],
+	plugins: [svelte()],
+	optimizeDeps: {
+		include: [
+			'esm-env',
+			'html-url-attributes',
+			'property-information',
+			'remark-parse',
+			'remark-rehype',
+			'style-to-object',
+			'unified'
+		]
+	},
 	test: {
 		expect: { requireAssertions: true },
 		projects: [
 			{
-				extends: './vite.config.ts',
+				extends: './vitest.config.ts',
 				test: {
 					name: 'client',
 					environment: 'browser',
@@ -17,12 +28,12 @@ export default defineConfig({
 						instances: [{ browser: 'chromium' }]
 					},
 					include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
-					exclude: ['src/lib/server/**'],
+					exclude: ['src/server/**'],
 					setupFiles: ['./vitest-setup-client.ts']
 				}
 			},
 			{
-				extends: './vite.config.ts',
+				extends: './vitest.config.ts',
 				test: {
 					name: 'server',
 					environment: 'node',

@@ -2,20 +2,20 @@
 	"name": "@sejohnson/hardened-svelte-markdown",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build && npm run prepack",
-		"preview": "vite preview",
-		"prepare": "svelte-kit sync || echo ''",
-		"prepack": "svelte-kit sync && svelte-package && publint",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"build": "npm run prepack",
+		"prepack": "svelte-package --input=src && publint",
+		"check": "svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
 		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run"
+		"test": "pnpm test:unit --run"
 	},
 	"files": [
 		"dist",
 		"!dist/**/*.test.*",
-		"!dist/**/*.spec.*"
+		"!dist/**/*.spec.*",
+		"src",
+		"!src/**/*.test.*",
+		"!src/**/*.spec.*"
 	],
 	"sideEffects": [
 		"**/*.css"
@@ -34,13 +34,12 @@
 	},
 	"devDependencies": {
 		"@sejohnson/svelte-markdown": "workspace:*",
-		"@sveltejs/adapter-vercel": "catalog:",
-		"@sveltejs/kit": "catalog:",
 		"@sveltejs/package": "catalog:",
 		"@sveltejs/vite-plugin-svelte": "catalog:",
 		"@types/hast": "catalog:",
 		"@types/node": "catalog:",
 		"@vitest/browser": "catalog:",
+		"config": "workspace:*",
 		"playwright": "catalog:",
 		"publint": "catalog:",
 		"svelte": "catalog:",

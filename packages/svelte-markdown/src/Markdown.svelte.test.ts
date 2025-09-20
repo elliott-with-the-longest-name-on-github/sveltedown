@@ -4,7 +4,6 @@ import Markdown from './Markdown.svelte';
 import rehype_raw from 'rehype-raw';
 import remark_gfm from 'remark-gfm';
 import { create_children_element_renderer } from './MarkdownTestRenderers.svelte';
-import '../../vitest.d.ts';
 import type { Parents, Nodes } from 'hast';
 
 describe('Markdown', () => {

@@ -1,8 +1,9 @@
 {
-	"name": "@sejohnson/svelte-markdown",
+	"name": "sveltedown",
 	"version": "0.0.1",
 	"scripts": {
 		"build": "npm run prepack",
+		"build:watch": "svelte-package --input=src --watch",
 		"prepack": "svelte-package --input=src && publint",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
@@ -67,14 +68,12 @@
 		"svelte"
 	],
 	"dependencies": {
-		"esm-env": "catalog:",
-		"html-url-attributes": "catalog:",
+		"hast-to-svelte": "workspace:*",
 		"property-information": "catalog:",
 		"remark-parse": "catalog:",
 		"remark-rehype": "catalog:",
 		"style-to-object": "catalog:",
 		"unified": "catalog:",
-		"unist-util-visit": "catalog:",
 		"vfile": "catalog:"
 	}
 }

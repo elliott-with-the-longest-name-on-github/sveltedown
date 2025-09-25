@@ -7,11 +7,6 @@ import { create_children_element_renderer } from './MarkdownTestRenderers.svelte
 import type { Parents, Nodes } from 'hast';
 
 describe('Markdown', () => {
-	it('should support `null` as children', async () => {
-		const screen = render(Markdown, { content: null });
-		await expect.element(screen.container).to_equal_html('');
-	});
-
 	it('should support `undefined` as children', async () => {
 		const screen = render(Markdown, { content: undefined });
 		await expect.element(screen.container).to_equal_html('');
@@ -230,106 +225,6 @@ describe('Markdown', () => {
 		await expect
 			.element(screen.container)
 			.to_equal_html('<p><a href="a#javascript:alert(1)"></a></p>');
-	});
-
-	it('should support `urlTransform` (`href` on `a`)', async () => {
-		const screen = render(Markdown, {
-			content: '[a](https://b.com "c")',
-			urlTransform: function (url, key, node) {
-				expect(url).toBe('https://b.com');
-				expect(key).toBe('href');
-				expect(node.tagName).toBe('a');
-				return '';
-			}
-		});
-		await expect.element(screen.container).to_equal_html('<p><a href="" title="c">a</a></p>');
-	});
-
-	it('should support `urlTransform` w/ empty URLs', async () => {
-		const screen = render(Markdown, {
-			content: '[]()',
-			urlTransform: function (url, key, node) {
-				expect(url).toBe('');
-				expect(key).toBe('href');
-				expect(node.tagName).toBe('a');
-				return '';
-			}
-		});
-		await expect.element(screen.container).to_equal_html('<p><a href=""></a></p>');
-	});
-
-	it('should support `urlTransform` (`src` on `img`)', async () => {
-		const screen = render(Markdown, {
-			content: '![a](https://b.com "c")',
-			urlTransform: function (url, key, node) {
-				expect(url).toBe('https://b.com');
-				expect(key).toBe('src');
-				expect(node.tagName).toBe('img');
-				return null;
-			}
-		});
-		await expect.element(screen.container).to_equal_html('<p><img alt="a" title="c"/></p>');
-	});
-
-	it('should support `skipHtml`', async () => {
-		const screen = render(Markdown, { content: 'a<i>b</i>c', skipHtml: true });
-		await expect.element(screen.container).to_equal_html('<p>abc</p>');
-	});
-
-	it('should support `allowedElements` (drop unlisted nodes)', async () => {
-		const screen = render(Markdown, {
-			content: '# *a*\n* b',
-			allowedElements: new Set(['h1', 'li', 'ul'])
-		});
-		await expect.element(screen.container).to_equal_html('<h1></h1>\n<ul>\n<li>b</li>\n</ul>');
-	});
-
-	it('should support `allowedElements` as a function', async () => {
-		const screen = render(Markdown, {
-			content: '*a* **b**',
-			allowElement: function (element) {
-				return element.tagName !== 'em';
-			}
-		});
-		await expect.element(screen.container).to_equal_html('<p> <strong>b</strong></p>');
-	});
-
-	it('should support `disallowedElements`', async () => {
-		const screen = render(Markdown, {
-			content: '# *a*\n* b',
-			disallowedElements: new Set(['em'])
-		});
-		await expect.element(screen.container).to_equal_html('<h1></h1>\n<ul>\n<li>b</li>\n</ul>');
-	});
-
-	it('should fail for both `allowedElements` and `disallowedElements`', async () => {
-		expect(() => {
-			render(Markdown, {
-				content: '',
-				allowedElements: new Set(['p']),
-				disallowedElements: new Set(['a'])
-			});
-		}).toThrow(
-			/Unexpected combined `allowedElements` and `disallowedElements`, expected one or the other/
-		);
-	});
-
-	it('should support `unwrapDisallowed` w/ `allowedElements`', async () => {
-		const screen = render(Markdown, {
-			content: '# *a*',
-			unwrapDisallowed: true,
-			allowedElements: new Set(['h1'])
-		});
-		await expect.element(screen.container).to_equal_html('<h1>a</h1>');
-	});
-
-	it('should support `unwrapDisallowed` w/ `disallowedElements`', async () => {
-		const screen = render(Markdown, {
-			content: '# *a*',
-			unwrapDisallowed: true,
-			disallowedElements: new Set(['em'])
-		});
-		await expect.element(screen.container).to_equal_html('<h1>a</h1>');
 	});
 
 	it('should support `remarkRehypeOptions`', async () => {

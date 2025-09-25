@@ -1,8 +1,9 @@
 {
-	"name": "@sejohnson/hardened-svelte-markdown",
+	"name": "hast-to-svelte",
 	"version": "0.0.1",
 	"scripts": {
 		"build": "npm run prepack",
+		"build:watch": "svelte-package --input=src --watch",
 		"prepack": "svelte-package --input=src && publint",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
@@ -33,7 +34,6 @@
 		"svelte": "catalog:"
 	},
 	"devDependencies": {
-		"@sejohnson/svelte-markdown": "workspace:*",
 		"@sveltejs/package": "catalog:",
 		"@sveltejs/vite-plugin-svelte": "catalog:",
 		"@types/hast": "catalog:",
@@ -53,6 +53,7 @@
 		"svelte"
 	],
 	"dependencies": {
-		"unist-util-visit": "catalog:"
+		"property-information": "catalog:",
+		"style-to-object": "catalog:"
 	}
 }

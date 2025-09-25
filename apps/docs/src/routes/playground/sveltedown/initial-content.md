@@ -1,13 +1,6 @@
-export const load = async () => {
-	return {
-		initial_content
-	};
-};
+# A demo of \`sveltedown\`
 
-const initial_content = `\
-# A demo of \`@sejohnson/svelte-markdown\`
-
-\`@sejohnson/svelte-markdown\` is a markdown component for Svelte.
+\`sveltedown\` is a markdown component for Svelte.
 
 👉 Changes are re-rendered as you type.
 
@@ -15,11 +8,11 @@ const initial_content = `\
 
 ## Overview
 
-* Follows [CommonMark](https://commonmark.org)
-* Optionally follows [GitHub Flavored Markdown](https://github.github.com/gfm/)
-* Renders Svelte elements -- no \`@html\` needed
-* Lets you define your own snippets (to \`@render myHeading\` instead of \`'h1'\`)
-* Has a lot of plugins
+- Follows [CommonMark](https://commonmark.org)
+- Optionally follows [GitHub Flavored Markdown](https://github.github.com/gfm/)
+- Renders Svelte elements -- no \`@html\` needed
+- Lets you define your own snippets (to \`@render myHeading\` instead of \`'h1'\`)
+- Has a lot of plugins
 
 ## Contents
 
@@ -32,7 +25,6 @@ Here is an example of a plugin in action
 Here is an example of a plugin to highlight code:
 [\`@shikijs/rehype\`](https://shiki.matsu.io/packages/rehype).
 
-
 Create a shared highlighter in \`load\`:
 
 \`\`\`ts
@@ -41,29 +33,31 @@ import { createHighlighterCore } from 'shiki/core';
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
 
 export const load = async () => {
-	const highlighter = await createHighlighterCore({
-		themes: [import('@shikijs/themes/github-light'), import('@shikijs/themes/github-dark')],
-		langs: [
-			import('@shikijs/langs/svelte'),
-			import('@shikijs/langs/javascript'),
-			import('@shikijs/langs/typescript'),
-			import('@shikijs/langs/markdown')
-		],
-		engine: createOnigurumaEngine(() => import('shiki/wasm'))
-	});
+const highlighter = await createHighlighterCore({
+themes: [import('@shikijs/themes/github-light'), import('@shikijs/themes/github-dark')],
+langs: [
+import('@shikijs/langs/svelte'),
+import('@shikijs/langs/javascript'),
+import('@shikijs/langs/typescript'),
+import('@shikijs/langs/markdown')
+],
+engine: createOnigurumaEngine(() => import('shiki/wasm'))
+});
 
-	return {
-		highlighter,
-	};
+    return {
+    	highlighter,
+    };
+
 };
 \`\`\`
 
 ...and then use it in your component:
 
 \`\`\`svelte
+
 <script lang="ts">
   // src/routes/+page.svelte
-  import { Markdown } from '@sejohnson/svelte-markdown';
+  import { Markdown } from 'sveltedown';
   import rehypeShikiFromHighlighter from '@shikijs/rehype/core';
 
   const { data } = $props();
@@ -72,14 +66,14 @@ export const load = async () => {
 </script>
 
 <Markdown
-  {content}
-  rehypePlugins={[
-    [
-      rehypeShikiFromHighlighter,
-      data.highlighter,
-      { themes: { light: 'github-light', dark: 'github-dark' } }
-    ]
-  ]}
+{content}
+rehypePlugins={[
+[
+rehypeShikiFromHighlighter,
+data.highlighter,
+{ themes: { light: 'github-light', dark: 'github-dark' } }
+]
+]}
 />
 \`\`\`
 
@@ -91,7 +85,7 @@ Pretty neat, eh?
 
 ## GitHub flavored markdown (GFM)
 
-For GFM, you can *also* use a plugin:
+For GFM, you can _also_ use a plugin:
 [\`remark-gfm\`](https://github.com/remarkjs/remark-gfm).
 It adds support for GitHub-specific extensions to the language:
 tables, strikethrough, tasklists, and literal URLs.
@@ -99,15 +93,15 @@ tables, strikethrough, tasklists, and literal URLs.
 These features **do not work by default**.
 👆 Use the toggle above to add the plugin.
 
-| Feature    | Support              |
-| ---------: | :------------------- |
-| CommonMark | 100%                 |
-| GFM        | 100% w/ \`remark-gfm\` |
+|    Feature | Support                |
+| ---------: | :--------------------- |
+| CommonMark | 100%                   |
+|        GFM | 100% w/ \`remark-gfm\` |
 
 ~~strikethrough~~
 
-* [ ] task list
-* [x] checked item
+- [ ] task list
+- [x] checked item
 
 https://example.com
 
@@ -127,19 +121,23 @@ You should probably combine it with
 You can render custom content by mapping HTML elements to other HTML elements or by passing snippets for full custom control over rendering. HTML and SVG element tags are available as props directly on \`Markdown\`.
 
 \`\`\`svelte filename=src/lib/markdown.svelte
+
 <script lang="ts">
-  import { Markdown } from '@sejohnson/svelte-markdown';
+  import { Markdown } from 'sveltedown';
   import MyFancyDiv from '$lib/my-fancy-div.svelte';
 
   let content = $state('');
 </script>
 
 <!-- use h2s instead of h1s for # headings -->
+
 <Markdown {content} h1="h2">
+
   <!-- use a custom component instead of divs -->
-  {#snippet div({ props, children })}
-    <MyFancyDiv {...props}>{@render children()}</MyFancyDiv>
-  {/snippet}
+
+{#snippet div({ props, children })}
+<MyFancyDiv {...props}>{@render children()}</MyFancyDiv>
+{/snippet}
 </Markdown>
 \`\`\`
 
@@ -147,4 +145,3 @@ You can render custom content by mapping HTML elements to other HTML elements or
 
 Much more info is available in the
 [readme on GitHub](https://github.com/elliott-with-the-longest-name-on-github/svelte-markdown)!
-`;

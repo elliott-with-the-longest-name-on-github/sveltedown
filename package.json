@@ -5,6 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "pnpm -r build",
+		"dev": "concurrently \"pnpm --filter hast-to-svelte build:watch\" \"pnpm --filter sveltedown build:watch\" \"pnpm --filter docs dev\"",
 		"check": "pnpm -r check",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
@@ -24,6 +25,7 @@
 		"@eslint/js": "catalog:",
 		"@sveltejs/adapter-vercel": "catalog:",
 		"@sveltejs/vite-plugin-svelte": "catalog:",
+		"concurrently": "catalog:",
 		"eslint": "catalog:",
 		"eslint-config-prettier": "catalog:",
 		"eslint-plugin-svelte": "catalog:",

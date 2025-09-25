@@ -1,6 +1,6 @@
 <script module lang="ts">
 	import type { Snippet } from 'svelte';
-	import type { Renderer, RendererArg, SpecificSvelteHTMLElements } from './types.js';
+	import type { Renderer, RendererArg, SpecificSvelteHTMLElements } from 'hast-to-svelte';
 
 	function create_children_element_renderer<TTag extends keyof SpecificSvelteHTMLElements>(
 		assertions: (arg: RendererArg<TTag>) => Promise<void> = () => Promise.resolve()

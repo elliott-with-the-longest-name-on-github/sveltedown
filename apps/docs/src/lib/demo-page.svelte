@@ -4,7 +4,7 @@
 	import remark_toc from 'remark-toc';
 	import rehype_raw from 'rehype-raw';
 	import remark_gfm from 'remark-gfm';
-	import { type Options } from '@sejohnson/svelte-markdown';
+	import { type Options } from 'sveltedown';
 	import rehypeShikiFromHighlighter from '@shikijs/rehype/core';
 	import type { HighlighterCore } from 'shiki/core';
 	import type { Snippet } from 'svelte';

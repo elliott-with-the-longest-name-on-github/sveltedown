@@ -45,6 +45,9 @@ catalogs:
     '@vitest/browser':
       specifier: 3.2.4
       version: 3.2.4
+    concurrently:
+      specifier: ^9.1.0
+      version: 9.2.1
     eslint:
       specifier: ^9.36.0
       version: 9.36.0
@@ -55,14 +58,11 @@ catalogs:
       specifier: ^3.12.3
       version: 3.12.3
     esm-env:
-      specifier: ^1.2.2
+      specifier: 1.2.2
       version: 1.2.2
     globals:
       specifier: ^16.4.0
       version: 16.4.0
-    html-url-attributes:
-      specifier: ^3.0.1
-      version: 3.0.1
     playwright:
       specifier: ^1.53.0
       version: 1.55.0
@@ -73,7 +73,7 @@ catalogs:
       specifier: ^3.4.0
       version: 3.4.0
     property-information:
-      specifier: ^7.1.0
+      specifier: 7.1.0
       version: 7.1.0
     publint:
       specifier: ^0.3.2
@@ -97,7 +97,7 @@ catalogs:
       specifier: ^3.13.0
       version: 3.13.0
     style-to-object:
-      specifier: ^1.0.9
+      specifier: 1.0.9
       version: 1.0.9
     svelte:
       specifier: ^5.5.0
@@ -112,11 +112,8 @@ catalogs:
       specifier: ^8.44.0
       version: 8.44.0
     unified:
-      specifier: ^11.0.5
+      specifier: 11.0.5
       version: 11.0.5
-    unist-util-visit:
-      specifier: ^5.0.0
-      version: 5.0.0
     vfile:
       specifier: ^6.0.3
       version: 6.0.3
@@ -146,6 +143,9 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: 'catalog:'
         version: 6.1.3(svelte@5.38.6)(vite@7.1.3(@types/node@22.18.6))
+      concurrently:
+        specifier: 'catalog:'
+        version: 9.2.1
       eslint:
         specifier: 'catalog:'
         version: 9.36.0
@@ -170,12 +170,6 @@ importers:
 
   apps/docs:
     devDependencies:
-      '@sejohnson/hardened-svelte-markdown':
-        specifier: workspace:*
-        version: link:../../packages/hardened-svelte-markdown
-      '@sejohnson/svelte-markdown':
-        specifier: workspace:*
-        version: link:../../packages/svelte-markdown
       '@shikijs/langs':
         specifier: 'catalog:'
         version: 3.13.0
@@ -215,6 +209,9 @@ importers:
       svelte-check:
         specifier: 'catalog:'
         version: 4.3.1(picomatch@4.0.3)(svelte@5.38.6)(typescript@5.9.2)
+      sveltedown:
+        specifier: workspace:*
+        version: link:../../packages/sveltedown
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -231,15 +228,18 @@ importers:
         specifier: 'catalog:'
         version: 3.2.4(@types/debug@4.1.12)(@types/node@22.18.6)(@vitest/browser@3.2.4)
 
-  packages/hardened-svelte-markdown:
+  packages/hast-to-svelte:
     dependencies:
-      unist-util-visit:
+      esm-env:
         specifier: 'catalog:'
-        version: 5.0.0
+        version: 1.2.2
+      property-information:
+        specifier: 'catalog:'
+        version: 7.1.0
+      style-to-object:
+        specifier: 'catalog:'
+        version: 1.0.9
     devDependencies:
-      '@sejohnson/svelte-markdown':
-        specifier: workspace:*
-        version: link:../svelte-markdown
       '@sveltejs/package':
         specifier: 'catalog:'
         version: 2.5.0(svelte@5.38.6)(typescript@5.9.2)
@@ -273,6 +273,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
+      unified:
+        specifier: 'catalog:'
+        version: 11.0.5
       vite:
         specifier: 'catalog:'
         version: 7.1.3(@types/node@22.18.6)
@@ -283,14 +286,11 @@ importers:
         specifier: 'catalog:'
         version: 0.1.0(@vitest/browser@3.2.4)(svelte@5.38.6)(vitest@3.2.4)
 
-  packages/svelte-markdown:
+  packages/sveltedown:
     dependencies:
-      esm-env:
-        specifier: 'catalog:'
-        version: 1.2.2
-      html-url-attributes:
-        specifier: 'catalog:'
-        version: 3.0.1
+      hast-to-svelte:
+        specifier: workspace:*
+        version: link:../hast-to-svelte
       property-information:
         specifier: 'catalog:'
         version: 7.1.0
@@ -306,9 +306,6 @@ importers:
       unified:
         specifier: 'catalog:'
         version: 11.0.5
-      unist-util-visit:
-        specifier: 'catalog:'
-        version: 5.0.0
       vfile:
         specifier: 'catalog:'
         version: 6.0.3
@@ -1120,6 +1117,10 @@ packages:
     resolution: {integrity: sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==}
     engines: {node: '>=18'}
 
+  cliui@8.0.1:
+    resolution: {integrity: sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==}
+    engines: {node: '>=12'}
+
   clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
     engines: {node: '>=6'}
@@ -1136,6 +1137,11 @@ packages:
 
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
+
+  concurrently@9.2.1:
+    resolution: {integrity: sha512-fsfrO0MxV64Znoy8/l1vVIjjHa29SZyyqPgQBwhiDcaW8wJc2W3XWVOGx4M3oJBnv/zdUZIIp1gDeS98GzP8Ng==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   consola@3.4.2:
     resolution: {integrity: sha512-5IKcdX0nnYavi6G7TtOhwkYzyjfJlatbjMjuLSfE2kYT5pMDOilZ4OvMhi637CcDICTmz3wARPoyhqyX1Y+XvA==}
@@ -1217,6 +1223,10 @@ packages:
     resolution: {integrity: sha512-9RiGKvCwaqxO2owP61uQ4BgNborAQskMR6QusfWzQqv7AZOg5oGehdY2pRJMTKuwxd1IDBP4rSbI5lHzU7SMsQ==}
     engines: {node: '>=18'}
     hasBin: true
+
+  escalade@3.2.0:
+    resolution: {integrity: sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==}
+    engines: {node: '>=6'}
 
   escape-string-regexp@4.0.0:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
@@ -1364,6 +1374,10 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
+  get-caller-file@2.0.5:
+    resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
+    engines: {node: 6.* || 8.* || >= 10.*}
+
   github-slugger@2.0.0:
     resolution: {integrity: sha512-IaOQ9puYtjrkq7Y0Ygl9KDZnrf/aiUJYUpVf89y8kyaxbRG7Y1SrX/jaumrv81vc61+kiMempujsM3Yw7w5qcw==}
 
@@ -1420,9 +1434,6 @@ packages:
 
   hastscript@9.0.1:
     resolution: {integrity: sha512-g7df9rMFX/SPi34tyGCyUBREQoKkapwdY/T04Qn9TDWfHhAYt4/I0gMVirzK5wEzeUqIjEB+LXC/ypb7Aqno5w==}
-
-  html-url-attributes@3.0.1:
-    resolution: {integrity: sha512-ol6UPyBWqsrO6EJySPz2O7ZSr856WDrEzM5zMqp+FJJLGMW35cLYmmZnl0vztAZxRUoNZJFTCohfjuIJ8I4QBQ==}
 
   html-void-elements@3.0.0:
     resolution: {integrity: sha512-bEqo66MRXsUGxWHV5IP0PUiAWwoEjba4VCzg0LjFJBpchPaTfyfCKTG6bc5F8ucKec3q5y6qOdGyYTSBEvhCrg==}
@@ -1916,6 +1927,10 @@ packages:
   remark-toc@9.0.0:
     resolution: {integrity: sha512-KJ9txbo33GjDAV1baHFze7ij4G8c7SGYoY8Kzsm2gzFpbhL/bSoVpMMzGa3vrNDSWASNd/3ppAqL7cP2zD6JIA==}
 
+  require-directory@2.1.1:
+    resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
+    engines: {node: '>=0.10.0'}
+
   resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
     engines: {node: '>=4'}
@@ -1936,6 +1951,9 @@ packages:
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
 
+  rxjs@7.8.2:
+    resolution: {integrity: sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==}
+
   sade@1.8.1:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
     engines: {node: '>=6'}
@@ -1955,6 +1973,10 @@ packages:
   shebang-regex@3.0.0:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
+
+  shell-quote@1.8.3:
+    resolution: {integrity: sha512-ObmnIF4hXNg1BqhnHmgbDETF8dLPCggZWBjkQfhZpbszZnYur5DUljTcCHii5LC3J5E0yeO/1LIMyH+UvHQgyw==}
+    engines: {node: '>= 0.4'}
 
   shiki@3.13.0:
     resolution: {integrity: sha512-aZW4l8Og16CokuCLf8CF8kq+KK2yOygapU5m3+hoGw0Mdosc6fPitjM+ujYarppj5ZIKGyPDPP1vqmQhr+5/0g==}
@@ -2015,6 +2037,10 @@ packages:
   supports-color@7.2.0:
     resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
     engines: {node: '>=8'}
+
+  supports-color@8.1.1:
+    resolution: {integrity: sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q==}
+    engines: {node: '>=10'}
 
   svelte-check@4.3.1:
     resolution: {integrity: sha512-lkh8gff5gpHLjxIV+IaApMxQhTGnir2pNUAqcNgeKkvK5bT/30Ey/nzBxNLDlkztCH4dP7PixkMt9SWEKFPBWg==}
@@ -2079,6 +2105,10 @@ packages:
 
   tr46@0.0.3:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
+
+  tree-kill@1.2.2:
+    resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
+    hasBin: true
 
   trim-lines@3.0.1:
     resolution: {integrity: sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg==}
@@ -2279,6 +2309,10 @@ packages:
       utf-8-validate:
         optional: true
 
+  y18n@5.0.8:
+    resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}
+    engines: {node: '>=10'}
+
   yallist@5.0.0:
     resolution: {integrity: sha512-YgvUTfwqyc7UXVMrB+SImsVYSmTS8X/tSrtdNZMImM+n7+QTriRXyXim0mBrTXNeqzVF0KWGgHPeiyViFFrNDw==}
     engines: {node: '>=18'}
@@ -2286,6 +2320,14 @@ packages:
   yaml@1.10.2:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
     engines: {node: '>= 6'}
+
+  yargs-parser@21.1.1:
+    resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
+    engines: {node: '>=12'}
+
+  yargs@17.7.2:
+    resolution: {integrity: sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==}
+    engines: {node: '>=12'}
 
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
@@ -3015,6 +3057,12 @@ snapshots:
 
   chownr@3.0.0: {}
 
+  cliui@8.0.1:
+    dependencies:
+      string-width: 4.2.3
+      strip-ansi: 6.0.1
+      wrap-ansi: 7.0.0
+
   clsx@2.1.1: {}
 
   color-convert@2.0.1:
@@ -3026,6 +3074,15 @@ snapshots:
   comma-separated-tokens@2.0.3: {}
 
   concat-map@0.0.1: {}
+
+  concurrently@9.2.1:
+    dependencies:
+      chalk: 4.1.2
+      rxjs: 7.8.2
+      shell-quote: 1.8.3
+      supports-color: 8.1.1
+      tree-kill: 1.2.2
+      yargs: 17.7.2
 
   consola@3.4.2: {}
 
@@ -3105,6 +3162,8 @@ snapshots:
       '@esbuild/win32-arm64': 0.25.10
       '@esbuild/win32-ia32': 0.25.10
       '@esbuild/win32-x64': 0.25.10
+
+  escalade@3.2.0: {}
 
   escape-string-regexp@4.0.0: {}
 
@@ -3270,6 +3329,8 @@ snapshots:
   fsevents@2.3.3:
     optional: true
 
+  get-caller-file@2.0.5: {}
+
   github-slugger@2.0.0: {}
 
   glob-parent@5.1.2:
@@ -3369,8 +3430,6 @@ snapshots:
       hast-util-parse-selector: 4.0.0
       property-information: 7.1.0
       space-separated-tokens: 2.0.2
-
-  html-url-attributes@3.0.1: {}
 
   html-void-elements@3.0.0: {}
 
@@ -4020,6 +4079,8 @@ snapshots:
       '@types/mdast': 4.0.4
       mdast-util-toc: 7.1.0
 
+  require-directory@2.1.1: {}
+
   resolve-from@4.0.0: {}
 
   resolve-from@5.0.0: {}
@@ -4056,6 +4117,10 @@ snapshots:
     dependencies:
       queue-microtask: 1.2.3
 
+  rxjs@7.8.2:
+    dependencies:
+      tslib: 2.8.1
+
   sade@1.8.1:
     dependencies:
       mri: 1.2.0
@@ -4069,6 +4134,8 @@ snapshots:
       shebang-regex: 3.0.0
 
   shebang-regex@3.0.0: {}
+
+  shell-quote@1.8.3: {}
 
   shiki@3.13.0:
     dependencies:
@@ -4135,6 +4202,10 @@ snapshots:
       inline-style-parser: 0.2.4
 
   supports-color@7.2.0:
+    dependencies:
+      has-flag: 4.0.0
+
+  supports-color@8.1.1:
     dependencies:
       has-flag: 4.0.0
 
@@ -4216,6 +4287,8 @@ snapshots:
   totalist@3.0.1: {}
 
   tr46@0.0.3: {}
+
+  tree-kill@1.2.2: {}
 
   trim-lines@3.0.1: {}
 
@@ -4420,9 +4493,23 @@ snapshots:
 
   ws@8.18.3: {}
 
+  y18n@5.0.8: {}
+
   yallist@5.0.0: {}
 
   yaml@1.10.2: {}
+
+  yargs-parser@21.1.1: {}
+
+  yargs@17.7.2:
+    dependencies:
+      cliui: 8.0.1
+      escalade: 3.2.0
+      get-caller-file: 2.0.5
+      require-directory: 2.1.1
+      string-width: 4.2.3
+      y18n: 5.0.8
+      yargs-parser: 21.1.1
 
   yocto-queue@0.1.0: {}
 

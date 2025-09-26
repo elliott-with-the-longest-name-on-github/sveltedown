@@ -19,6 +19,8 @@ jobs:
         with:
           node-version: 22.x
           cache: 'pnpm'
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install
 
       - run: pnpm install
         env:

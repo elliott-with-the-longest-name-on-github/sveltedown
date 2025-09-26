@@ -3,4 +3,4 @@
 'svehast': major
 ---
 
-feat: Initial release
+feat: Initial release!

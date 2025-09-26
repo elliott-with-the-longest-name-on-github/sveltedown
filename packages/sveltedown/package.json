@@ -68,12 +68,9 @@
 		"svelte"
 	],
 	"dependencies": {
-		"hast-to-svelte": "workspace:*",
-		"property-information": "catalog:",
+		"svehast": "workspace:*",
 		"remark-parse": "catalog:",
 		"remark-rehype": "catalog:",
-		"style-to-object": "catalog:",
-		"unified": "catalog:",
-		"vfile": "catalog:"
+		"unified": "catalog:"
 	}
 }

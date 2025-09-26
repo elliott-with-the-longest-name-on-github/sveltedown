@@ -1,1 +1,1 @@
-import 'config/vitest/globals';
+import 'config/vitest';

@@ -1,58 +1,72 @@
-# Svelte library
+# `svehast`
 
-Everything you need to build a Svelte library, powered by [`sv`](https://npmjs.com/package/sv).
+A component for rendering [`hast`](https://github.com/syntax-tree/hast) trees. If you're just trying to render markdown, you may be looking for [`sveltedown`](https://npmjs.com/package/sveltedown) instead.
 
-Read more about creating a library [in the docs](https://svelte.dev/docs/kit/packaging).
+## API
 
-## Creating a project
+This package exports a single component: `Hast`. You can use it like this:
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```sh
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+```svelte
+<Hast node={/* Root */} />
 ```
 
-## Developing
+`node` must be a `Root` node. If you have a different kind of `hast` node, you can turn it into a root node pretty easily: `{ type: 'root', children: [myNode] }`.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+It also supports custom renderers. Normally, the easiest way to declare these is as snippets that are direct children of `Hast`:
 
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+```svelte
+<Hast node={/* Root */}>
+  {#snippet a({ tagName, props, children, node })}
+    <a {...props} href="/haha-all-links-are-now-the-same">
+      {@render children()}
+    </a>
+  {/snippet}
+</Hast>
 ```
 
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
+But you can also pass snippets as arguments to the `Hast` component (see [`RendererArg`](#rendererarg) below for argument details):
 
-## Building
+```svelte
+{#snippet a({ tagName, props, children, node })}
+  <a {...props} href="/haha-all-links-are-now-the-same">
+    {@render children()}
+  </a>
+{/snippet}
 
-To build your library:
-
-```sh
-npm pack
+<Hast node={/* Root */} {a}/>
 ```
 
-To create a production version of your showcase app:
+You can also map nodes to other nodes. For example, if you wanted to only ever render down to a `h3`, you could map headings 4-6 back to `h3`:
 
-```sh
-npm run build
+```svelte
+<Hast node={/* Root */} h4="h3" h5="h3" h6="h3">
 ```
 
-You can preview the production build with `npm run preview`.
+That's pretty much it!
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Types
 
-## Publishing
+This package exports a few types that might help you build your own extensions.
 
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
+### `Renderer`
 
-To publish your library to [npm](https://www.npmjs.com):
+The type of a custom renderer. This is either a HTML/SVG tag name (for remapping) or a `Snippet` accepting a `RenderArg` as its only argument.
 
-```sh
-npm publish
-```
+### `RendererArg`
+
+The argument a custom renderer accepts:
+
+- `tagName` is the HTML/SVG tag name to render
+- `props` are the props. Typically you should spread these onto the element you're rendering
+- `children` is the snippet you need to render as a child. It will be `undefined` for void elements like `<img>`.
+- `node` is the original and unmodified `hast` node
+
+A note on `tagName`: This is the name associated with the _resolved_ renderer, not the one we started with. So if we started with a `hast` element with a `tagName` of `h6`, but `h6` had been mapped to `h3`, the tag name passed to your custom renderer would be `h3`. If you need the _original_ tag name, you can find it on the `node` prop, as that remains unchanged.
+
+### `Renderers`
+
+A map of all HTML/SVG tag names that Svelte can render to their corresponding [`Renderer`](#renderer) definition.
+
+### `HTMLElements`
+
+This is `SvelteHTMLElements` without the special `svelte:` elements and with no index signature. Essentially, it's a map of all HTML and SVG tags that Svelte can render to the props that those tag types can have. You probably don't need this.

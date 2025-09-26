@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Options } from './types.js';
 	import { create_processor } from './core.js';
-	import { Hast } from 'hast-to-svelte';
+	import { Hast } from 'svehast';
 
 	let options: Options = $props();
 
@@ -10,4 +10,4 @@
 	const compiled = $derived(processor.runSync(parsed));
 </script>
 
-<Hast node={compiled} renderers={options} />
+<Hast node={compiled} {...options} />

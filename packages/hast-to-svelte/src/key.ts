@@ -1,4 +1,4 @@
-import type { Nodes, RootContent } from 'hast';
+import type { Nodes } from 'hast';
 
 const map = new Map<Nodes, string>();
 
@@ -11,34 +11,30 @@ export function key(node: Nodes) {
 	let key = map.get(node);
 
 	if (!key) {
-		key = deconflict(hash_contents(node));
+		key = deconflict_node(node);
 		map.set(node, key);
 	}
 
 	return key;
 }
 
-function hash_contents(node: Nodes): string {
+function deconflict_node(node: Nodes): string {
 	switch (node.type) {
 		case 'text':
-			return hash(node.value);
+			return deconflict(node.value);
 		case 'element':
-			return hash(node.tagName + hash_children(node.children));
-		case 'root':
-			return hash_children(node.children);
+			return deconflict(node.tagName);
 		case 'comment':
-			return hash(node.value);
+			return deconflict(node.value);
 		case 'doctype':
-			return '';
+		case 'root':
+			return deconflict(node.type);
 		default: {
 			const _: never = node;
+			console.log(node);
 			throw new Error('Unknown node type');
 		}
 	}
-}
-
-function hash_children(children: RootContent[]): string {
-	return children.map((node) => hash_contents(node)).join('');
 }
 
 const conflicts = new Set<string>();
@@ -51,12 +47,4 @@ function deconflict(str: string) {
 	}
 	conflicts.add(deconflicted);
 	return deconflicted;
-}
-
-function hash(str: string) {
-	let hash = 5381;
-	let i = str.length;
-
-	while (i--) hash = ((hash << 5) - hash) ^ str.charCodeAt(i);
-	return (hash >>> 0).toString(36);
 }

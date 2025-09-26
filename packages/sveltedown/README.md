@@ -1,48 +1,55 @@
 # `sveltedown`
 
-A Svelte component for rendering markdown. Strongly inspired by [`react-markdown`](https://github.com/remarkjs/react-markdown).
+A Svelte component for rendering markdown. Inspired by [`react-markdown`][github-react-markdown].
+
+Check out the [demo](https://sveltedown.vercel.app/).
 
 ## Feature highlights
 
-- [x] **[safe][section-security] by default**
-      (no `dangerouslySetInnerHTML` or XSS attacks)
-- [x] **[snippets][section-snippets]**
-      (pass your own component to use instead of `<h2>` for `## hi`)
-- [x] **[plugins][section-plugins]**
-      (many plugins you can pick and choose from)
-- [x] **[compliant][section-syntax]**
-      (100% to CommonMark, 100% to GFM with a plugin)
+- **[Super easy][section-getting-started]**: You can render markdown in your application in seconds!
+- **[Customizable][section-snippets]**: Pass your own snippets in to control what's rendered
+- **[Huge plugin ecosystem][section-plugins]**: Built on `remark` and `rehype`
+- **[Compliant][section-syntax]**: 100% to CommonMark, 100% to GFM with a plugin
 
 ## Contents
 
-- [What is this?](#what-is-this)
+- [Getting started](#getting-started)
 - [When should I use this?](#when-should-i-use-this)
-- [Use](#use)
 - [API](#api)
-  - [`Markdown`](#markdown)
-  - [`MarkdownAsync`](#markdownasync)
-  - [`defaultUrlTransform(url)`](#defaulturltransformurl)
-  - [`AllowElement`](#allowelement)
-  - [`renderers`](#renderers)
-  - [`Options`](#options)
-  - [`UrlTransform`](#urltransform)
+  - [Components](#components)
+    - [`Markdown`](#markdown)
+    - [`MarkdownAsync`](#markdownasync)
+  - [Functions](#functions)
+    - [`defaultUrlTransform`](#defaulturltransform)
+  - [Types](#types)
+    - [`Options`](#options)
+    - [`URLTransform`](#urltransform)
+    - [`Renderer`](#renderer)
+    - [`RendererArg`](#rendererarg)
+    - [`Renderers`](#renderers)
 - [Examples](#examples)
-  - [Use a plugin](#use-a-plugin)
-  - [Use a plugin with options](#use-a-plugin-with-options)
-  - [Use custom renderers (syntax highlight)](#use-custom-renderers-syntax-highlight)
-  - [Use remark and rehype plugins (math)](#use-remark-and-rehype-plugins-math)
+  - [Use custom renderers](#use-custom-renderers)
 - [Plugins](#plugins)
 - [Syntax](#syntax)
+- [Architecture](#architecture)
 
-## What is this?
+## Getting started
 
-This package is a [Svelte](https://svelte.dev) component that can be given a string of markdown
-that it’ll safely render to Svelte elements.
-You can pass plugins to change how markdown is transformed and pass components
-that will be used instead of normal HTML elements.
+Install the package:
 
-- to learn markdown, see this [cheatsheet and tutorial][commonmark-help]
-- to try out `sveltedown`, see [our demo](TODO)
+```sh
+pnpm i sveltedown # or npm, yarn
+```
+
+Import and use the component:
+
+```svelte
+<script lang="ts">
+	import { Markdown } from 'sveltedown';
+</script>
+
+<Markdown content="# Hello, world!" />
+```
 
 ## When should I use this?
 
@@ -50,236 +57,140 @@ This package focusses on making it easy for beginners to safely use markdown in
 Svelte. It provides sane defaults and options for rendering markdown in a dynamic context.
 If you reach the end of the customization you can achieve with this component and want to strike
 out on your own, have no fear! The implementation is actually quite simple, and you can take advantage
-of [`hast-to-svelte`](https://github.com/elliott-with-the-longest-name-on-github/sveltedown) to build
+of [`svehast`](https://npmjs.com/package/svehast) to build
 your own markdown processing pipeline.
-
-## Install
-
-```sh
-pnpm i sveltedown
-```
-
-## Use
-
-A basic hello world:
-
-```svelte
-<script lang="ts">
-	import { Markdown } from 'sveltedown';
-
-	const markdown = '# Neato _burrito_';
-</script>
-
-<Markdown content={markdown} />
-```
-
-<details>
-<summary>Show equivalent HTML</summary>
-
-```js
-<h1>
-	Neato <em>burrito</em>!
-</h1>
-```
-
-</details>
-```
-
-Here is an example that shows how to use a plugin
-([`remark-gfm`][github-remark-gfm],
-which adds support for footnotes, strikethrough, tables, tasklists and
-URLs directly):
-
-```svelte
-<script lang="ts">
-	import { Markdown } from 'sveltedown';
-	import remarkGfm from 'remark-gfm';
-
-	const markdown = 'Just a link: www.nasa.gov.';
-</script>
-
-<Markdown content={markdown} remarkPlugins={[remarkGfm]} />
-```
-
-<details>
-<summary>Show equivalent HTML</summary>
-
-```js
-<p>
-	Just a link: <a href="http://www.nasa.gov">www.nasa.gov</a>.
-</p>
-```
-
-</details>
-```
 
 ## API
 
-This package exports the identifiers
-[`Markdown`][api-markdown]
-[`MarkdownAsync`][api-markdown-async],
-and
-[`defaultUrlTransform`][api-default-url-transform].
-The default export is [`Markdown`][api-markdown].
+This package exports two components and one function:
 
-It also exports the additional TypeScript types
-[`AllowElement`][api-allow-element],
-[`Renderers`][api-renderers],
-[`Options`][api-options],
-and
-[`UrlTransform`][api-url-transform].
+- [`Markdown`][api-markdown]
+- [`MarkdownAsync`][api-markdown-async] (experimental, exported from `sveltedown/experimental-async`)
+- [`defaultUrlTransform`][api-default-url-transform]
 
-### `Markdown`
+It also exports the following additional TypeScript types:
 
-Component to render markdown.
+- [`Options`][api-options]
+- [`URLTransform`][api-url-transform]
+- All of the types from [`svehast`](https://npmjs.com/package/svehast#types)
 
-This is a synchronous component.
-When using async plugins,
-see [`MarkdownAsync`][api-markdown-async].
+### Components
 
-###### Parameters
+#### `Markdown`
 
-- `options` ([`Options`][api-options])
-  — props
+The core export of this package. You can use it like this:
 
-### `MarkdownAsync`
-
-Component to render markdown with support for async plugins
-through async/await.
-
-This uses `experimental.async` from Svelte and is intended to be used with the new `svelte:boundary`.
-
-Most of the time, you probably don't want to run async plugins. For example, shiki allows you to
-create your highligher outside of your Markdown pipeline and then pass the resolved highlighter
-into your plugin to make the plugin synchronous; this allows you to do the heavy async work somewhere
-outside of the plugin pipeline and avoid redoing that work every time your content changes.
-
-###### Parameters
-
-- `options` ([`Options`][api-options])
-  — props
-
-### `defaultUrlTransform(url)`
-
-Make a URL safe.
-
-This follows how GitHub works.
-It allows the protocols `http`, `https`, `irc`, `ircs`, `mailto`, and `xmpp`,
-and URLs relative to the current protocol (such as `/something`).
-
-###### Parameters
-
-- `url` (`string`)
-  — URL
-
-###### Returns
-
-Safe URL (`string`).
-
-### `AllowElement`
-
-Filter elements.
-
-###### Parameters
-
-- `node` ([`Element` from `hast`][github-hast-element])
-  — element to check
-- `index` (`number | undefined`)
-  — index of `element` in `parent`
-- `parent` ([`Node` from `hast`][github-hast-nodes])
-  — parent of `element`
-
-###### Returns
-
-Whether to allow `element` (`boolean`, optional).
-
-### `Renderers`
-
-Map tag names to custom renderers (snippets).
-
-###### Type
-
-```ts
-type RemoveIndex<T> = {
-	[K in keyof T as string extends K
-		? never
-		: number extends K
-			? never
-			: symbol extends K
-				? never
-				: K]: T[K];
-};
-
-export type SpecificSvelteHTMLElements = RemoveIndex<SvelteHTMLElements>;
-
-export type RendererArg<T extends keyof SpecificSvelteHTMLElements> = {
-	tagName: T;
-	props: SpecificSvelteHTMLElements[T];
-	children?: Snippet;
-	node?: HastElement;
-};
-
-export type Renderer<T extends keyof SpecificSvelteHTMLElements> = Snippet<[RendererArg<T>]>;
-
-/** Map tag names to renderers. */
-export type Renderers = {
-	[Key in keyof SpecificSvelteHTMLElements]?: Renderer<Key> | keyof SvelteHTMLElements;
-};
+```svelte
+<Markdown content="# Hello, world!" />
 ```
 
-### `Options`
+`content` can be any markdown-formatted string.
 
-Configuration.
+It also supports custom renderers. Normally, the easiest way to declare these is as snippets that are direct children of `Markdown`:
 
-###### Fields
+```svelte
+<Markdown content="[a link to this package](https://npmjs.com/package/sveltedown)">
+  {#snippet a({ tagName, props, children, node })}
+    <a {...props} href="/haha-all-links-are-now-the-same">
+      {@render children()}
+    </a>
+  {/snippet}
+</Hast>
+```
 
-- `allowElement` ([`AllowElement`][api-allow-element], optional)
-  — filter elements;
-  `allowedElements` / `disallowedElements` is used first
-- `allowedElements` (`Array<string>`, default: all tag names)
-  — tag names to allow;
-  cannot combine w/ `disallowedElements`
-- `content` (`string`, optional)
-  — markdown content to render
-- `disallowedElements` (`Array<string>`, default: `[]`)
-  — tag names to disallow;
-  cannot combine w/ `allowedElements`
-- `rehypePlugins` (`Array<Plugin>`, optional)
-  — list of [rehype plugins][github-rehype-plugins] to use
-- `remarkPlugins` (`Array<Plugin>`, optional)
-  — list of [remark plugins][github-remark-plugins] to use
-- `remarkRehypeOptions`
-  ([`Options` from `remark-rehype`][github-remark-rehype-options],
-  optional)
-  — options to pass through to `remark-rehype`
-- `skipHtml` (`boolean`, default: `false`)
-  — ignore HTML in markdown completely
-- `unwrapDisallowed` (`boolean`, default: `false`)
-  — extract (unwrap) what’s in disallowed elements;
-  normally when you say `strong` is not allowed, it and it’s children are dropped,
-  with `unwrapDisallowed` the element itself is replaced by its children
-- `urlTransform` ([`UrlTransform`][api-url-transform], default:
-  [`defaultUrlTransform`][api-default-url-transform])
-  — change URLs
+Remember to render the children!
 
-This also has a field for every element tag Markdown is capable of rendering (`a`, `div`, `img`, etc). You can set these to other tags (eg. `h4: 'h3'` to render `h4` elements as `h3` elements), or you can set them to custom snippet renderers to have complete control over what content is rendered.
+You can also pass snippets as arguments to the `Markdown` component (see [`RendererArg`](#rendererarg) below for argument details):
 
-### `UrlTransform`
+```svelte
+{#snippet a({ tagName, props, children, node })}
+  <a {...props} href="/haha-all-links-are-now-the-same">
+    {@render children()}
+  </a>
+{/snippet}
 
-Transform URLs (TypeScript type).
+<Hast node={/* Root */} {a}/>
+```
 
-###### Parameters
+You can also map nodes to other nodes. For example, if you wanted to only ever render down to a `h3`, you could map headings 4-6 back to `h3`:
 
-- `url` (`string`)
-  — URL
-- `key` (`string`, example: `'href'`)
-  — property name
-- `node` ([`Element` from `hast`][github-hast-element])
-  — element to check
+```svelte
+<Hast node={/* Root */} h4="h3" h5="h3" h6="h3">
+```
 
-###### Returns
+That's pretty much it!
 
-Transformed URL (`string`, optional).
+#### `MarkdownAsync`
+
+If you have an asynchronous plugin in your pipeline, regular `Markdown` will fail. `MarkdownAsync` will run your pipeline asynchronously, and is compatible with Svelte's `experimental.async` compiler option.
+The API is the same as `Markdown`, save that it will suspend while rendering your content. You'll want to use a `svelte:boundary` with `pending` content:
+
+```svelte
+<svelte:boundary>
+  <Markdown content="# Neato burrito">
+
+  {#snippet pending()}
+    <Skeleton />
+  {/snippet}
+<svelte:boundary>
+```
+
+Most of the time, you should avoid asynchronous plugins. Many of them actually have a way to hoist the asynchronous work out of your Markdown pipeline. For example, when using Shiki to highlight code,
+you can instantiate a global highlighter instance, then share that instance between all of your plugin invocations, which can run synchronously.
+
+### Functions
+
+#### `defaultUrlTransform`
+
+By default, `Markdown` does what GitHub does with links. It allows the protocols `http`, `https`, `irc`, `ircs`, `mailto`, and `xmpp`, and URLs relative to the current protocol (such as `/something`). This function is exported
+so that if you implement your own URL transform logic, you can reapply the default if necessary.
+
+### Types
+
+This package exports a number of types.
+
+#### `Options`
+
+The options you can pass to `Markdown` and `MarkdownAsync`.
+
+- `content`: The markdown content. `string | undefined`
+- `remarkPlugins`: Remark plugins to run prior to transforming the `mdast` to `hast`
+- `rehypePlugins`: Rehype plugins to run prior to rendering the `hast` to the DOM
+- `remarkParseOptions`: Options to pass to `remark-parse` (the plugin that parses your content to `mdast`)
+- `remarkRehypeOptions`: Options to pass to `remark-rehype` (the plugin that translates `mdast` to `hast`)
+- `skipHtml`: Ignore HTML in markdown completely. Defaults to `false`. `boolean | undefined`
+- `urlTransform`: Transform URLs in HTML attributes (href, ping, src, etc.). Defaults to `defaultUrlTransform`.
+
+**Notes**:
+
+- Both `remarkPlugins` and `rehypePlugins` are of type `PluggableList`. This means there are a few ways you can register them:
+  - If the plugin receives no options, it can be passed in as a root-level array item: `[myOptionlessPlugin]`
+  - If the plugin takes options, you should pass a tuple of the plugin and the options: `[[myPlugin, myPluginOptions]]`
+  - If you have multiple plugins, it would look like this: `[myOptionlessPlugin, [myPlugin, myPluginOptions]]`
+- If all of the `remark` and `rehype` stuff is confusing, that's fine -- there's a section later explaining the markdown processing pipeline
+
+#### `URLTransform`
+
+Is called every time a HTML property containing a URL is found. Has the opportunity to transform the URL or remove it. Receives the URL, the property the URL came from (`src`, `href`, etc.), and the node it came from.
+
+#### `Renderer`
+
+The type of a custom renderer. This is either a HTML/SVG tag name (for remapping) or a `Snippet` accepting a `RenderArg` as its only argument.
+
+#### `RendererArg`
+
+The argument a custom renderer accepts:
+
+- `tagName` is the HTML/SVG tag name to render
+- `props` are the props. Typically you should spread these onto the element you're rendering
+- `children` is the snippet you need to render as a child. It will be `undefined` for void elements like `<img>`.
+- `node` is the original and unmodified `hast` node
+
+A note on `tagName`: This is the name associated with the _resolved_ renderer, not the one we started with. So if we started with a `hast` element with a `tagName` of `h6`, but `h6` had been mapped to `h3`, the tag name passed to your custom renderer would be `h3`. If you need the _original_ tag name, you can find it on the `node` prop, as that remains unchanged.
+
+#### `Renderers`
+
+A map of all HTML/SVG tag names that Svelte can render to their corresponding [`Renderer`](#renderer) definition.
 
 ## Examples
 
@@ -347,9 +258,19 @@ Here are three good ways to find plugins:
 markdown implementations, by default.
 Some syntax extensions are supported through plugins.
 
-I use [`micromark`][github-micromark] under the hood for our parsing.
+`remark` uses [`micromark`][github-micromark] under the hood for its parsing.
 See its documentation for more information on markdown, CommonMark, and
 extensions.
+
+## Architecture
+
+When you pass a string to `Markdown`, it passes through a pipeline before it becomes the content you see on the screen:
+
+- First, `remark-parse` parses your markdown string into a `mdast`, the ast representation of markdown
+- Next, your remark plugins are run on this `mdast`
+- Then, `remark-rehype` converts your `mdast` to `hast`, a html ast
+- Then, your `rehype` plugins run on this `hast`
+- Finally, the `hast` is converted to Svelte, which renders it
 
 [api-allow-element]: #allowelement
 [api-default-url-transform]: #defaulturltransformurl
@@ -364,6 +285,7 @@ extensions.
 [github-hast-element]: https://github.com/syntax-tree/hast#element
 [github-hast-nodes]: https://github.com/syntax-tree/hast#nodes
 [github-micromark]: https://github.com/micromark/micromark
+[github-react-markdown]: https://github.com/remarkjs/react-markdown
 [github-rehype]: https://github.com/rehypejs/rehype
 [github-rehype-plugins]: https://github.com/rehypejs/rehype/blob/main/doc/plugins.md#list-of-plugins
 [github-remark]: https://github.com/remarkjs/remark
@@ -373,6 +295,7 @@ extensions.
 [github-topic-rehype-plugin]: https://github.com/topics/rehype-plugin
 [github-topic-remark-plugin]: https://github.com/topics/remark-plugin
 [github-unified]: https://github.com/unifiedjs/unified
+[section-getting-started]: #getting-started
 [section-plugins]: #plugins
 [section-security]: #security
 [section-snippets]: #use-custom-renderers

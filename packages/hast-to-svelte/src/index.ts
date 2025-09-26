@@ -1,2 +1,2 @@
-export type { Renderers, RendererArg, Renderer, SpecificSvelteHTMLElements } from './types.js';
+export type { Renderers, RendererArg, Renderer, HTMLElements } from './types.js';
 export { default as Hast } from './Hast.svelte';

@@ -52,8 +52,8 @@ function sveltify_prop(
 
 export function sveltify_children(node: Parents): Parents['children'] {
 	return node.children.filter((child) => {
-		if (node.type === 'element' && table_elements.has(node.tagName)) {
-			return typeof child === 'string' ? !whitespace(child) : true;
+		if (node.type === 'element' && table_elements.has(node.tagName) && child.type === 'text') {
+			return !whitespace(child.value);
 		}
 		return true;
 	});

@@ -1,14 +1,11 @@
-import type { Renderer, Renderers, SpecificSvelteHTMLElements } from './types';
+import type { Renderer, Renderers, HTMLElements } from './types';
 
 export function get_renderer(
 	tag_name: string | number,
 	renderers: Renderers,
-	fallback: Renderer<keyof SpecificSvelteHTMLElements>,
+	fallback: Renderer<keyof HTMLElements>,
 	seen = new Set<string>()
-): [
-	resolved_tag_name: keyof SpecificSvelteHTMLElements,
-	renderer: Renderer<keyof SpecificSvelteHTMLElements>
-] {
+): [resolved_tag_name: keyof HTMLElements, renderer: Renderer<keyof HTMLElements>] {
 	if (seen.has(tag_name as string)) {
 		throw new Error(`Circular renderer dependency: ${[...seen].join(' => ')} => ${tag_name}`);
 	}
@@ -18,11 +15,8 @@ export function get_renderer(
 	}
 
 	if (renderer) {
-		return [
-			tag_name as keyof SpecificSvelteHTMLElements,
-			renderer as Renderer<keyof SpecificSvelteHTMLElements>
-		];
+		return [tag_name as keyof HTMLElements, renderer as Renderer<keyof HTMLElements>];
 	} else {
-		return [tag_name as keyof SpecificSvelteHTMLElements, fallback];
+		return [tag_name as keyof HTMLElements, fallback];
 	}
 }

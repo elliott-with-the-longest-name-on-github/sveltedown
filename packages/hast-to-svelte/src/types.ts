@@ -12,18 +12,22 @@ type RemoveIndex<T> = {
 				: K]: T[K];
 };
 
-export type SpecificSvelteHTMLElements = RemoveIndex<SvelteHTMLElements>;
+type RemoveSveltePrefixed<T> = {
+	[K in keyof T as K extends `svelte:${string}` ? never : K]: T[K];
+};
 
-export type RendererArg<T extends keyof SpecificSvelteHTMLElements> = {
+export type HTMLElements = RemoveSveltePrefixed<RemoveIndex<SvelteHTMLElements>>;
+
+export type RendererArg<T extends keyof HTMLElements> = {
 	tagName: T;
-	props: SpecificSvelteHTMLElements[T];
+	props: HTMLElements[T];
 	children?: Snippet;
 	node?: HastElement;
 };
 
-export type Renderer<T extends keyof SpecificSvelteHTMLElements> = Snippet<[RendererArg<T>]>;
+export type Renderer<T extends keyof HTMLElements> = Snippet<[RendererArg<T>]>;
 
 /** Map tag names to renderers. */
 export type Renderers = {
-	[Key in keyof SpecificSvelteHTMLElements]?: Renderer<Key> | keyof SvelteHTMLElements;
+	[Key in keyof HTMLElements]?: Renderer<Key> | keyof SvelteHTMLElements;
 };

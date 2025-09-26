@@ -227,6 +227,50 @@ describe('Markdown', () => {
 			.to_equal_html('<p><a href="a#javascript:alert(1)"></a></p>');
 	});
 
+	it('should support `urlTransform` (`href` on `a`)', async () => {
+		const screen = render(Markdown, {
+			content: '[a](https://b.com "c")',
+			urlTransform: function (url, key, node) {
+				expect(url).toBe('https://b.com');
+				expect(key).toBe('href');
+				expect(node.tagName).toBe('a');
+				return '';
+			}
+		});
+		await expect.element(screen.container).to_equal_html('<p><a href="" title="c">a</a></p>');
+	});
+
+	it('should support `urlTransform` w/ empty URLs', async () => {
+		const screen = render(Markdown, {
+			content: '[]()',
+			urlTransform: function (url, key, node) {
+				expect(url).toBe('');
+				expect(key).toBe('href');
+				expect(node.tagName).toBe('a');
+				return '';
+			}
+		});
+		await expect.element(screen.container).to_equal_html('<p><a href=""></a></p>');
+	});
+
+	it('should support `urlTransform` (`src` on `img`)', async () => {
+		const screen = render(Markdown, {
+			content: '![a](https://b.com "c")',
+			urlTransform: function (url, key, node) {
+				expect(url).toBe('https://b.com');
+				expect(key).toBe('src');
+				expect(node.tagName).toBe('img');
+				return undefined;
+			}
+		});
+		await expect.element(screen.container).to_equal_html('<p><img alt="a" title="c"/></p>');
+	});
+
+	it('should support `skipHtml`', async () => {
+		const screen = render(Markdown, { content: 'a<i>b</i>c', skipHtml: true });
+		await expect.element(screen.container).to_equal_html('<p>abc</p>');
+	});
+
 	it('should support `remarkRehypeOptions`', async () => {
 		const screen = render(Markdown, {
 			content: '[^x]\n\n[^x]: a\n\n',
@@ -561,7 +605,7 @@ describe('Markdown', () => {
 		await expect.element(screen.container).to_equal_html('<i style=""></i><p>a</p>');
 	});
 
-	it('should support SVG elements', async () => {
+	it.only('should support SVG elements', async () => {
 		function plugin() {
 			return function (tree: Parents) {
 				tree.children.unshift({

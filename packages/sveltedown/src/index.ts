@@ -1,4 +1,4 @@
 export { default as Markdown } from './Markdown.svelte';
-export { default as AppendOnly } from './AppendOnly.svelte';
-export type { Options } from './types.js';
-export type { Renderers, RendererArg, Renderer, SpecificSvelteHTMLElements } from 'hast-to-svelte';
+export { defaultUrlTransform } from './core.js';
+export type { Options, URLTransform } from './types.js';
+export type { Renderers, RendererArg, Renderer, HTMLElements } from 'svehast';

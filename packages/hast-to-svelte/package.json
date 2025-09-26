@@ -1,5 +1,5 @@
 {
-	"name": "hast-to-svelte",
+	"name": "svehast",
 	"version": "0.0.1",
 	"scripts": {
 		"build": "npm run prepack",
@@ -40,6 +40,7 @@
 		"@types/node": "catalog:",
 		"@vitest/browser": "catalog:",
 		"config": "workspace:*",
+		"hastscript": "catalog:",
 		"playwright": "catalog:",
 		"publint": "catalog:",
 		"svelte": "catalog:",
@@ -55,5 +56,8 @@
 	"dependencies": {
 		"property-information": "catalog:",
 		"style-to-object": "catalog:"
+	},
+	"publishConfig": {
+		"access": "public"
 	}
 }

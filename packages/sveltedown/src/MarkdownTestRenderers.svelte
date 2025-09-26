@@ -1,8 +1,8 @@
 <script module lang="ts">
 	import type { Snippet } from 'svelte';
-	import type { Renderer, RendererArg, SpecificSvelteHTMLElements } from 'hast-to-svelte';
+	import type { Renderer, RendererArg, HTMLElements } from 'svehast';
 
-	function create_children_element_renderer<TTag extends keyof SpecificSvelteHTMLElements>(
+	function create_children_element_renderer<TTag extends keyof HTMLElements>(
 		assertions: (arg: RendererArg<TTag>) => Promise<void> = () => Promise.resolve()
 	) {
 		let { promise, resolve, reject } = Promise.withResolvers();
@@ -24,9 +24,9 @@
 	children,
 	props
 }: {
-	tagName: keyof SpecificSvelteHTMLElements;
+	tagName: keyof HTMLElements;
 	children?: Snippet;
-	props: SpecificSvelteHTMLElements[keyof SpecificSvelteHTMLElements];
+	props: HTMLElements[keyof HTMLElements];
 })}
 	<svelte:element this={tag_name} {...props}>{@render children?.()}</svelte:element>
 {/snippet}

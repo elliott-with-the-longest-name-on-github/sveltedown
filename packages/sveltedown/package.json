@@ -77,7 +77,6 @@
 		"@types/node": "catalog:",
 		"@vitest/browser": "catalog:",
 		"config": "workspace:*",
-		"playwright": "catalog:",
 		"publint": "catalog:",
 		"rehype-raw": "catalog:",
 		"remark-gfm": "catalog:",

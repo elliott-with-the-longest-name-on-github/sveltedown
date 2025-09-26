@@ -33,6 +33,7 @@
 		"eslint-config-prettier": "catalog:",
 		"eslint-plugin-svelte": "catalog:",
 		"globals": "catalog:",
+		"playwright": "catalog:",
 		"prettier": "catalog:",
 		"prettier-plugin-svelte": "catalog:",
 		"typescript-eslint": "catalog:"

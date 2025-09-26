@@ -59,7 +59,6 @@
 		"@vitest/browser": "catalog:",
 		"config": "workspace:*",
 		"hastscript": "catalog:",
-		"playwright": "catalog:",
 		"publint": "catalog:",
 		"svelte": "catalog:",
 		"svelte-check": "catalog:",

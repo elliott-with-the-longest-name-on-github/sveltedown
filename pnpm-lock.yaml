@@ -161,6 +161,9 @@ importers:
       globals:
         specifier: 'catalog:'
         version: 16.4.0
+      playwright:
+        specifier: 'catalog:'
+        version: 1.55.0
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
@@ -261,9 +264,6 @@ importers:
       hastscript:
         specifier: 'catalog:'
         version: 9.0.1
-      playwright:
-        specifier: 'catalog:'
-        version: 1.55.0
       publint:
         specifier: 'catalog:'
         version: 0.3.12
@@ -322,9 +322,6 @@ importers:
       config:
         specifier: workspace:*
         version: link:../config
-      playwright:
-        specifier: 'catalog:'
-        version: 1.55.0
       publint:
         specifier: 'catalog:'
         version: 0.3.12

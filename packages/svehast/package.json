@@ -1,6 +1,6 @@
 {
 	"name": "svehast",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"description": "Render dynamic markdown with Svelte",
 	"homepage": "https://sveltedown.vercel.app/playground",
 	"license": "MIT",

@@ -9,13 +9,15 @@
 
 	let { node, ...renderers }: { node: Root } & Renderers = $props();
 
+	// TODO make key/reset local
+
 	$effect.pre(() => {
 		node;
 		reset();
 	});
 </script>
 
-{#snippet nodes(schema: Schema, children: RootContent[])}
+{#snippet nodes(schema: Schema, children: (Root | RootContent)[])}
 	{#each children as node (key(node))}
 		{#if node.type === 'text'}
 			{node.value}
@@ -39,6 +41,8 @@
 				children: has_children ? children : undefined,
 				node
 			})}
+		{:else if node.type === 'root'}
+			{@render nodes(schema, node.children)}
 		{/if}
 	{/each}
 {/snippet}

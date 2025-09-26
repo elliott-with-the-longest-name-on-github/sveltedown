@@ -4,15 +4,7 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 export default defineConfig({
 	plugins: [svelte()],
 	optimizeDeps: {
-		include: [
-			'esm-env',
-			'html-url-attributes',
-			'property-information',
-			'remark-parse',
-			'remark-rehype',
-			'style-to-object',
-			'unified'
-		]
+		include: ['remark-parse', 'remark-rehype', 'unified']
 	},
 	test: {
 		expect: { requireAssertions: true },

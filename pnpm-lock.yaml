@@ -282,9 +282,6 @@ importers:
 
   packages/sveltedown:
     dependencies:
-      property-information:
-        specifier: 'catalog:'
-        version: 7.1.0
       remark-parse:
         specifier: 'catalog:'
         version: 11.0.0

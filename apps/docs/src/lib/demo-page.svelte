@@ -1,6 +1,4 @@
 <script lang="ts">
-	import '../app.css';
-	import '../github-markdown.css';
 	import remark_toc from 'remark-toc';
 	import rehype_raw from 'rehype-raw';
 	import remark_gfm from 'remark-gfm';
@@ -40,7 +38,7 @@
 		})
 	);
 
-	function autoResize(content: string) {
+	function autoResize(_content: string) {
 		return (element: HTMLTextAreaElement) => {
 			if (element) {
 				element.style.height = 'auto';
@@ -66,6 +64,7 @@
 			</div>
 			<div class="editor-wrapper">
 				<div class="syntax-highlight" aria-hidden="true">
+					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 					{@html html}
 				</div>
 				<textarea

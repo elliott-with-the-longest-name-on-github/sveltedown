@@ -2,9 +2,9 @@ import type { Options as RemarkRehypeOptions } from 'remark-rehype';
 import type { Options, URLTransform } from './types.js';
 import type { Root as MdastRoot } from 'mdast';
 import type { Root as HastRoot, Nodes as HastNodes, Parents as HastParents } from 'hast';
-import remark_parse from 'remark-parse';
-import remark_rehype from 'remark-rehype';
-import { unified, type Processor, type PluggableList, type Plugin } from 'unified';
+import type _remark_parse from 'remark-parse';
+import type _remark_rehype from 'remark-rehype';
+import { type unified as _unified, type Processor, type PluggableList, type Plugin } from 'unified';
 import { url_attributes } from './url-attributes.js';
 
 const empty_plugins: PluggableList = [];
@@ -12,7 +12,10 @@ const empty_plugins: PluggableList = [];
 const empty_remark_rehype_options: RemarkRehypeOptions = { allowDangerousHtml: true };
 
 export function create_processor(
-	options: Readonly<Options>
+	options: Readonly<Options>,
+	unified: typeof _unified,
+	remark_parse: typeof _remark_parse,
+	remark_rehype: typeof _remark_rehype
 ): Processor<MdastRoot, MdastRoot, HastRoot, undefined, undefined> {
 	const remark_rehype_options = options.remarkRehypeOptions
 		? { ...options.remarkRehypeOptions, ...empty_remark_rehype_options }

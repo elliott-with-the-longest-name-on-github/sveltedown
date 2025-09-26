@@ -1,6 +1,24 @@
 {
 	"name": "svehast",
 	"version": "0.0.1",
+	"description": "Render dynamic markdown with Svelte",
+	"homepage": "https://sveltedown.vercel.app/playground",
+	"license": "MIT",
+	"author": "Elliott Johnson <hello@ell.iott.dev>",
+	"funding": {
+		"type": "github",
+		"url": "https://github.com/sponsors/elliott-with-the-longest-name-on-github"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/elliott-with-the-longest-name-on-github/sveltedown.git",
+		"directory": "packages/svehast"
+	},
+	"keywords": [
+		"svelte",
+		"hast",
+		"rehype"
+	],
 	"scripts": {
 		"build": "npm run prepack",
 		"build:watch": "svelte-package --input=src --watch",
@@ -50,9 +68,6 @@
 		"vitest": "catalog:",
 		"vitest-browser-svelte": "catalog:"
 	},
-	"keywords": [
-		"svelte"
-	],
 	"dependencies": {
 		"property-information": "catalog:",
 		"style-to-object": "catalog:"

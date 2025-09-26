@@ -8,9 +8,9 @@
 
 ## Overview
 
-- Follows [CommonMark](https://commonmark.org)
-- Optionally follows [GitHub Flavored Markdown](https://github.github.com/gfm/)
-- Renders Svelte elements -- no `@html` needed
+- Implements [CommonMark](https://commonmark.org)
+- Optionally implements [GitHub Flavored Markdown](https://github.github.com/gfm/)
+- Renders Svelte elements
 - Lets you define your own snippets (to `@render myHeading` instead of `'h1'`)
 - Has a lot of plugins
 
@@ -138,4 +138,4 @@ You can render custom content by mapping HTML elements to other HTML elements or
 ## More info?
 
 Much more info is available in the
-[readme on GitHub](https://github.com/elliott-with-the-longest-name-on-github/svelte-markdown)!
+[readme on GitHub](https://github.com/elliott-with-the-longest-name-on-github/sveltedown)!

@@ -2,16 +2,16 @@
 	import type { Root, RootContent } from 'hast';
 	import type { Renderer, Renderers, HTMLElements } from './types.js';
 	import { svg, html, type Schema } from 'property-information';
-	import { key, reset } from './key.js';
+	import { initKeys } from './key.js';
 	import type { Snippet } from 'svelte';
 	import { sveltify_props, sveltify_children } from './ast.js';
 	import { get_renderer } from './renderers.js';
 
 	let { node, ...renderers }: { node: Root } & Renderers = $props();
-
-	// TODO make key/reset local
+	const { key, reset } = initKeys();
 
 	$effect.pre(() => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		node;
 		reset();
 	});

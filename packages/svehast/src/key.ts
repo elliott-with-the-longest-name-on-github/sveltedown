@@ -1,34 +1,38 @@
 import type { Nodes } from 'hast';
 
-const map = new Map<Nodes, string>();
+export function initKeys() {
+	const map = new Map<Nodes, string>();
+	const conflicts = new Set<string>();
 
-export function reset() {
-	conflicts.clear();
-	map.clear();
+	return {
+		reset: () => {
+			conflicts.clear();
+			map.clear();
+		},
+		key: (node: Nodes) => {
+			let key = map.get(node);
+
+			if (!key) {
+				key = deconflict_node(conflicts, node);
+				map.set(node, key);
+			}
+
+			return key;
+		}
+	};
 }
 
-export function key(node: Nodes) {
-	let key = map.get(node);
-
-	if (!key) {
-		key = deconflict_node(node);
-		map.set(node, key);
-	}
-
-	return key;
-}
-
-function deconflict_node(node: Nodes): string {
+function deconflict_node(conflicts: Set<string>, node: Nodes): string {
 	switch (node.type) {
 		case 'text':
-			return deconflict(node.value);
+			return deconflict(conflicts, node.value);
 		case 'element':
-			return deconflict(node.tagName);
+			return deconflict(conflicts, node.tagName);
 		case 'comment':
-			return deconflict(node.value);
+			return deconflict(conflicts, node.value);
 		case 'doctype':
 		case 'root':
-			return deconflict(node.type);
+			return deconflict(conflicts, node.type);
 		default: {
 			const _: never = node;
 			console.log(node);
@@ -37,9 +41,7 @@ function deconflict_node(node: Nodes): string {
 	}
 }
 
-const conflicts = new Set<string>();
-
-function deconflict(str: string) {
+function deconflict(conflicts: Set<string>, str: string) {
 	let deconflicted = str;
 	let i = 0;
 	while (conflicts.has(deconflicted)) {

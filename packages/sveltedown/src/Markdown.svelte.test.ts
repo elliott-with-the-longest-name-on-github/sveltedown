@@ -605,7 +605,7 @@ describe('Markdown', () => {
 		await expect.element(screen.container).to_equal_html('<i style=""></i><p>a</p>');
 	});
 
-	it.only('should support SVG elements', async () => {
+	it('should support SVG elements', async () => {
 		function plugin() {
 			return function (tree: Parents) {
 				tree.children.unshift({

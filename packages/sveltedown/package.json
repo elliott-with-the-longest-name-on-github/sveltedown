@@ -2,7 +2,7 @@
 	"name": "sveltedown",
 	"version": "1.0.0",
 	"description": "Render dynamic markdown with Svelte",
-	"homepage": "https://sveltedown.vercel.app/playground",
+	"homepage": "https://sveltedown.ell.iott.dev/playground",
 	"license": "MIT",
 	"author": "Elliott Johnson <hello@ell.iott.dev>",
 	"funding": {

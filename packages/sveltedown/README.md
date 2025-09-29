@@ -2,7 +2,7 @@
 
 A Svelte component for rendering markdown. Inspired by [`react-markdown`][github-react-markdown].
 
-Check out the [demo](https://sveltedown.vercel.app/playground).
+Check out the [demo](https://sveltedown.ell.iott.dev/playground).
 
 ## Feature highlights
 
